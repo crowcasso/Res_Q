@@ -29,13 +29,16 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
             setRedArm();
 
             // drive back 69 inches or until we find the white line
-            boolean foundWhite = driveBackToWhite(.4, 69);
+            boolean foundWhite = driveBackToWhite(.3, 69);
             Thread.sleep(200);
 
             if (foundWhite) {   // yeah! found the white line
 
-                // back up 4.5 inches
-                driveBack(.1, 4.5);
+                //System.out.println("found white!");
+                /*
+                // back up 1.5 inches
+                drive(.1, 1.5);
+                */
                 Thread.sleep(1000);
 
                 // turn left 50 degrees
@@ -43,18 +46,23 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
                 Thread.sleep(200);
 
                 // drive away from wall looking for blue
-                driveToBlue(.2, 18);
-                Thread.sleep(500);
-
-                // drive back 13.5 inches
-                driveBack(.2, 13.5);
+                boolean foundBlue = driveToBlue(.2, 18);
                 Thread.sleep(200);
+
+                if (!foundBlue){
+                    driveBack(.3,26);
+                } else {
+                    driveBack(.2, 13.5);
+                    Thread.sleep(200);
+                }
 
             } else {
                 // did not find white line -- let's try to correct
+                //System.out.println("did not find white!");
 
                 // drive forward 4.5 inches
                 drive(.1, 4.5);
+                Thread.sleep(500);
 
                 // turn left 50 degrees
                 turnGyro(50);
@@ -71,9 +79,9 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
                     Thread.sleep(500);
                 }
 
-                // drive back 13 inches
+                // drive back 13.5 inches
                 if (foundBlue) {
-                    driveBack(.2, 13);
+                    driveBack(.2, 13.5);
                     Thread.sleep(200);
                 }
             }

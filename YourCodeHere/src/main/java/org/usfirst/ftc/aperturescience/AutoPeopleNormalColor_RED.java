@@ -73,7 +73,7 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
 
                 // drive back 13 inches
                 if (foundRed) {
-                    driveBack(.2, 13);
+                    driveBack(.2, 13.5);
                     Thread.sleep(200);
                 }
             }

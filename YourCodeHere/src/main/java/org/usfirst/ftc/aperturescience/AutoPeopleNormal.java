@@ -159,9 +159,9 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         wrist.setPosition(0.1);
         Thread.sleep(200);
         for (int i = 0; i < 30; i++) {
-            wrist.setPosition(0.17);
-            Thread.sleep(100);
             wrist.setPosition(0.15);
+            Thread.sleep(100);
+            wrist.setPosition(0.12);
             Thread.sleep(100);
         }
         Thread.sleep(500);
@@ -195,7 +195,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     }
 
     /* drive forward some distance -- using proportional control */
-    public void drive(double power, double distance) throws InterruptedException {
+    public void drive_proportinal(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
         double pointing = getHeading();
@@ -253,7 +253,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     }
 
     /*  drive forward without error correction */
-    public void old_drive(double power, double distance) throws InterruptedException {
+    public void drive(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
 
@@ -458,7 +458,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
 
     /* is the color sensor seeing white? */
     public boolean isWhite() {
-        if (colorSensor.red() > 8.0 && colorSensor.blue() > 8.0 && colorSensor.green() > 8.0){
+        if (colorSensor.red() > 6.0 && colorSensor.blue() > 6.0 && colorSensor.green() > 6.0){
             return true;
         }
         return false;
@@ -474,7 +474,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
 
     /* is the color sensor seeing blue? */
     public boolean isBlue() {
-        if (colorSensor.red() < 2.0 && colorSensor.blue() > 5.0 && colorSensor.green() < 2.0) {
+        if (colorSensor.red() < 1.0 && colorSensor.blue() > 3.0 && colorSensor.green() < 1.0) {
             return true;
         }
         return false;
