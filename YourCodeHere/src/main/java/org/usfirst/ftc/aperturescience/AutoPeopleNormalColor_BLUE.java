@@ -34,7 +34,7 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
 
             if (foundWhite) {   // yeah! found the white line
 
-                //System.out.println("found white!");
+                System.out.println("found white!");
                 /*
                 // back up 1.5 inches
                 drive(.1, 1.5);
@@ -58,10 +58,10 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
 
             } else {
                 // did not find white line -- let's try to correct
-                //System.out.println("did not find white!");
+                System.out.println("did not find white!");
 
-                // drive forward 4.5 inches
-                drive(.1, 4.5);
+                // drive forward 2`.5 inches
+                drive(.1, 2.5);
                 Thread.sleep(500);
 
                 // turn left 50 degrees
