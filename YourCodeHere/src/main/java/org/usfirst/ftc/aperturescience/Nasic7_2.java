@@ -460,7 +460,7 @@ public class Nasic7_2 extends OpMode {
         telemetry.addData("Wrist Pos", wristPos);
     }
 
-    private final double RED_UPOUT = 0.3;
+    private final double RED_UPOUT = 0.45;
     private final double RED_DOWN1 = 0.74;
     private final double RED_DOWN2 = 0.99;
     private final double CLIMBER_INCREMENT = 0.05;

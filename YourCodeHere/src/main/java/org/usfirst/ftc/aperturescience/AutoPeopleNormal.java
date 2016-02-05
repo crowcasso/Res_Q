@@ -214,7 +214,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         motorR.setPower(0.0);
     }
 
-    /* drive forward some distance -- using proportional control */
+    /* drive until we see red */
     public boolean driveToRed(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
@@ -233,7 +233,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         return foundRed;
     }
 
-    /* drive forward some distance -- using proportional control */
+    /* drive until we see blue */
     public boolean driveToBlue(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
@@ -284,7 +284,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         motorR.setPower(0.0);
     }
 
-    /* drive back without error correction */
+    /* drive back until we see white */
     public boolean driveBackToWhite(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
@@ -313,7 +313,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         return foundWhite;
     }
 
-    /* drive back without error correction */
+    /* drive back until we see red or white */
     public boolean driveBackToRedOrWhite(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
@@ -343,7 +343,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         return foundRed && foundWhite;
     }
 
-    /* drive back without error correction */
+    /* drive back until we see blue or white */
     public boolean driveBackToBlueOrWhite(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
