@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.swerverobotics.library.ClassFactory;
 import org.swerverobotics.library.SynchronousOpMode;
+import org.swerverobotics.library.interfaces.Disabled;
 import org.swerverobotics.library.interfaces.EulerAngles;
 import org.swerverobotics.library.interfaces.IBNO055IMU;
 import org.swerverobotics.library.interfaces.Position;
@@ -20,6 +21,7 @@ import org.swerverobotics.library.interfaces.Velocity;
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous
+@Disabled
 public class AutoBluePeople extends SynchronousOpMode {
 
     // Hardware
