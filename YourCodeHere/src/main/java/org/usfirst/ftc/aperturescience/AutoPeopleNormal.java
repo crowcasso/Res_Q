@@ -59,7 +59,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private final double GAIN = .1;
 
     /* red arm constants */
-    private final double RED_UPOUT = 0.3;
+    private final double RED_UPOUT = 0.45;
     private final double RED_TUCKED = 0.03;
 
     /* gryo/magnometer */
@@ -158,7 +158,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         // drop the bucket and shimmy
         wrist.setPosition(0.1);
         Thread.sleep(200);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 20; i++) {
             wrist.setPosition(0.15);
             Thread.sleep(100);
             wrist.setPosition(0.12);
@@ -466,7 +466,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
 
     /* is the color sensor seeing red? */
     public boolean isRed() {
-        if (colorSensor.red() > 5.0 && colorSensor.blue() < 2.0 && colorSensor.green() < 2.0){
+        if (colorSensor.red() > 4.0 && colorSensor.blue() < 2.0 && colorSensor.green() < 2.0){
             return true;
         }
         return false;

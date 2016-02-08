@@ -52,7 +52,7 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
                 if (!foundBlue){
                     driveBack(.3,26);
                 } else {
-                    driveBack(.2, 13.5);
+                    driveBack(.2, 14.5);
                     Thread.sleep(200);
                 }
 
@@ -75,13 +75,13 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
                 // missed it!
                 if (!foundBlue) {
                     // drive back looking for blue or white
-                    foundBlue = driveBackToBlueOrWhite(.2, 26);
+                    foundBlue = driveBackToBlueOrWhite(.2, 23);
                     Thread.sleep(500);
                 }
 
-                // found it! drive back 13.5 inches
+                // found it! drive back 14.5 inches
                 if (foundBlue) {
-                    driveBack(.2, 13.5);
+                    driveBack(.2, 14.5);
                     Thread.sleep(200);
                 }
             }

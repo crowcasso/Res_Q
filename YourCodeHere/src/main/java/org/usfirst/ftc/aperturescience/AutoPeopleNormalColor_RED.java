@@ -43,12 +43,19 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
                 Thread.sleep(200);
 
                 // drive away from wall looking for red
-                driveToRed(.2, 18);
+                boolean foundRed = driveToRed(.2, 18);
                 Thread.sleep(500);
 
-                // drive back 13.5 inches
-                driveBack(.2, 13.5);
-                Thread.sleep(200);
+                // drive back 14.5 inches
+                if (!foundRed) {
+                    driveBack(.2, 23);
+                    Thread.sleep(500);
+                }
+
+                if (foundRed){
+                    driveBack(.2, 14.5);
+                    Thread.sleep(200);
+                }
 
             } else {
                 // did not find white line -- let's try to correct
@@ -67,13 +74,13 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
                 // missed it!
                 if (!foundRed) {
                     // drive back looking for red or white
-                    foundRed = driveBackToRedOrWhite(.2, 26);
+                    driveBack(.2, 23);
                     Thread.sleep(500);
                 }
 
-                // found it! drive back 13 inches
+                // found it! drive back 14.5 inches
                 if (foundRed) {
-                    driveBack(.2, 13.5);
+                    driveBack(.2, 14.5);
                     Thread.sleep(200);
                 }
             }
