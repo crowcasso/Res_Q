@@ -176,13 +176,20 @@ public class AutoPeopleNormal extends SynchronousOpMode {
             System.out.println("armPos: " + armPos + ", arm power: " + -Range.clip(armPos / 200, 0.2, 1));
         }
 
+        System.out.println("arm is down, arm.isBusy: " + arm.isBusy());
+
+        arm.setPower(0);
+
+        System.out.println("armPos: " + arm.getCurrentPosition()
+                + ", armLimit: " + !armLimit.isPressed()
+                + ", arm.isBusy: " + arm.isBusy());
+
+        /* extra stops -- just in case */
         for (int stops = 1; stops <= 5; stops++) {
             arm.setPower(0);
-            Thread.sleep(200);
+            Thread.sleep(100);
             System.out.println("Stop # " + stops);
         }
-
-        System.out.println("armPos: " + arm.getCurrentPosition() + ", armLimit: " + !armLimit.isPressed());
 
         // bring the bucket up
         wrist.setPosition(WUP);
