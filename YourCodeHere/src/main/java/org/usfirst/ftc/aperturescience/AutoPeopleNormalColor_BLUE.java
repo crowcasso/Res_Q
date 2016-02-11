@@ -35,11 +35,7 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
         if (foundWhite) {   // yeah! found the white line
 
             System.out.println("found white!");
-                /*
-                // back up 1.5 inches
-                drive(.1, 1.5);
-                */
-            Thread.sleep(1000);
+            Thread.sleep(800);
 
             // turn left 50 degrees
             turnGyro(50);
@@ -60,9 +56,9 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
             // did not find white line -- let's try to correct
             System.out.println("did not find white!");
 
-            // drive forward 2`.5 inches
+            // drive forward 2.5 inches
             drive(.1, 2.5);
-            Thread.sleep(500);
+            Thread.sleep(1000);
 
             // turn left 50 degrees
             turnGyro(50);
@@ -70,13 +66,13 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
 
             // drive away from wall looking for blue line
             boolean foundBlue = driveToBlue(.2, 12);
-            Thread.sleep(500);
+            Thread.sleep(200);
 
             // missed it!
             if (!foundBlue) {
                 // drive back looking for blue or white
                 foundBlue = driveBackToBlueOrWhite(.2, 23);
-                Thread.sleep(500);
+                Thread.sleep(200);
             }
 
             // found it! drive back 14.5 inches

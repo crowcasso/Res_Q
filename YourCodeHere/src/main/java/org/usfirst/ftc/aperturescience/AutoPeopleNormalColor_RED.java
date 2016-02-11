@@ -44,12 +44,12 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
 
             // drive away from wall looking for red
             boolean foundRed = driveToRed(.2, 18);
-            Thread.sleep(500);
+            Thread.sleep(200);
 
             // drive back 14.5 inches
             if (!foundRed) {
                 driveBack(.2, 23);
-                Thread.sleep(500);
+                Thread.sleep(200);
             }
 
             if (foundRed){
@@ -69,13 +69,13 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
 
             // drive away from wall looking for red line
             boolean foundRed = driveToRed(.2, 12);
-            Thread.sleep(500);
+            Thread.sleep(200);
 
             // missed it!
             if (!foundRed) {
                 // drive back looking for red or white
                 driveBack(.2, 23);
-                Thread.sleep(500);
+                Thread.sleep(200);
             }
 
             // found it! drive back 14.5 inches
