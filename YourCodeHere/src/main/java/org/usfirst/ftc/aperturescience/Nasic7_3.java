@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
  *
  * @author FTC 5064 Aperture Science
  */
-public class Nasic7_2 extends OpMode {
+public class Nasic7_3 extends OpMode {
 
     // hardware
     private DcMotor arm;
@@ -34,7 +34,7 @@ public class Nasic7_2 extends OpMode {
     public enum ALLIANCE {RED, BLUE}
     private ALLIANCE alliance;
 
-    public Nasic7_2(ALLIANCE alliance) {
+    public Nasic7_3(ALLIANCE alliance) {
         super();
         this.alliance = alliance;
     }
