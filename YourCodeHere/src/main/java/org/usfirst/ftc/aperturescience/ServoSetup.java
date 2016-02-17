@@ -16,7 +16,7 @@ import org.swerverobotics.library.interfaces.TeleOp;
  * @author FTC 5064 Aperture Science
  */
 @TeleOp
-@Disabled
+//@Disabled
 public class ServoSetup extends OpMode {
 
     // Hardware
@@ -33,6 +33,9 @@ public class ServoSetup extends OpMode {
     private Servo wrist;
     private Servo servo;
     private Servo redArm;
+    private Servo leftTape;
+    private Servo rightTape;
+    private Servo tapeLock;
     //private Servo blueArm;
 
     boolean pressed = false;
@@ -57,17 +60,23 @@ public class ServoSetup extends OpMode {
         backShield = hardwareMap.servo.get("backShield");
         wrist = hardwareMap.servo.get("wrist");
         redArm = hardwareMap.servo.get("redArm");
+        leftTape = hardwareMap.servo.get("leftTape");
+        rightTape = hardwareMap.servo.get("rightTape");
+        tapeLock = hardwareMap.servo.get("tapeLock");
         //blueArm = hardwareMap.servo.get("blueArm");
 
 
         leftShield.setPosition(position);
         wrist.setPosition(position);
         rightShield.setPosition(position);
-        backShield.setPosition(position);
+        backShield.setPosition(.2); //position);
         redArm.setPosition(position);
+        leftTape.setPosition(position);
+        rightTape.setPosition(position);
+        tapeLock.setPosition(position);
         //blueArm.setPosition(position);
 
-        servo = redArm;
+        servo = backShield;
 
         arm.setPower(0);
 
