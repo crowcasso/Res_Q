@@ -33,22 +33,25 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private Servo rightShield;
     private Servo backShield;
     private Servo wrist;
+    private Servo leftTape;
+    private Servo rightTape;
     private Servo redArm;
+    private Servo blueArm;
     private TouchSensor armLimit;
     private TouchSensor turnLimit;
     private ColorSensor colorSensor;
 
     /* bucket constants */
     private final double WDOWN = 0.53;
-    private final double WUP = 0.0;
+    private final double WUP = 0.1;
 
     /* shield constants */
     private final double LSDOWN = 0.01;
     private final double LSUP = 0.57;
     private final double RSDOWN = 0.6;
     private final double RSUP = 0.04;
-    private final double BSDOWN = 0.81;
-    private final double BSUP = 0.35;
+    private final double BSDOWN = 0.42;
+    private final double BSUP = 0.84;
 
     /* motor constants */
     private final int ENCODER_CPR = 1120;
@@ -59,8 +62,16 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private final double GAIN = .1;
 
     /* red arm constants */
-    private final double RED_UPOUT = 0.45;
-    private final double RED_TUCKED = 0.03;
+    private final double RED_UP = 0.8;
+    private final double RED_DOWN = 0.11;
+
+    /* blue arm constants */
+    private final double BLUE_UP = 0.13;
+    private final double BLUE_DOWN = 0.7;
+
+    /* tape constants */
+    private final double LTAPE_UP = 0.9;
+    private final double RTAPE_UP = 0.15;
 
     /* gryo/magnometer */
     private IBNO055IMU imu;
@@ -82,6 +93,9 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         backShield = hardwareMap.servo.get("backShield");
         wrist = hardwareMap.servo.get("wrist");
         redArm = hardwareMap.servo.get("redArm");
+        blueArm = hardwareMap.servo.get("blueArm");
+        leftTape = hardwareMap.servo.get("leftTape");
+        rightTape = hardwareMap.servo.get("rightTape");
 
         // touch sensors
         armLimit = hardwareMap.touchSensor.get("armSwitch");
@@ -92,7 +106,10 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         wrist.setPosition(WUP);
         rightShield.setPosition(RSDOWN);
         backShield.setPosition(BSDOWN);
-        redArm.setPosition(RED_TUCKED);
+        redArm.setPosition(RED_UP);
+        blueArm.setPosition(BLUE_UP);
+        leftTape.setPosition(LTAPE_UP);
+        rightTape.setPosition(RTAPE_UP);
 
         // run certain motors using encoders
         motorL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
@@ -134,7 +151,12 @@ public class AutoPeopleNormal extends SynchronousOpMode {
 
     /* move the arm so its out of the way */
     public void setRedArm() {
-        redArm.setPosition(RED_UPOUT);
+        redArm.setPosition(RED_UP);
+    }
+
+    public void setTapes() {
+        leftTape.setPosition(LTAPE_UP - .1);
+        rightTape.setPosition(RTAPE_UP);
     }
 
 

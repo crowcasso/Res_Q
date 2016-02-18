@@ -28,6 +28,9 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
         // pull out the climber arm
         setRedArm();
 
+        // pull out the tapes
+        setTapes();
+
         // drive back 69 inches or until we find the white line
         boolean foundWhite = driveBackToWhite(.3, 69);
         Thread.sleep(200);

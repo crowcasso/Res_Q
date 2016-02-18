@@ -36,7 +36,7 @@ public class ServoSetup extends OpMode {
     private Servo leftTape;
     private Servo rightTape;
     private Servo tapeLock;
-    //private Servo blueArm;
+    private Servo blueArm;
 
     boolean pressed = false;
     double position = .5;
@@ -63,20 +63,20 @@ public class ServoSetup extends OpMode {
         leftTape = hardwareMap.servo.get("leftTape");
         rightTape = hardwareMap.servo.get("rightTape");
         tapeLock = hardwareMap.servo.get("tapeLock");
-        //blueArm = hardwareMap.servo.get("blueArm");
+        blueArm = hardwareMap.servo.get("blueArm");
 
 
         leftShield.setPosition(position);
         wrist.setPosition(position);
         rightShield.setPosition(position);
-        backShield.setPosition(.2); //position);
+        backShield.setPosition(.84); //position);
         redArm.setPosition(position);
         leftTape.setPosition(position);
         rightTape.setPosition(position);
         tapeLock.setPosition(position);
-        //blueArm.setPosition(position);
+        blueArm.setPosition(position);
 
-        servo = backShield;
+        servo = leftTape;
 
         arm.setPower(0);
 
