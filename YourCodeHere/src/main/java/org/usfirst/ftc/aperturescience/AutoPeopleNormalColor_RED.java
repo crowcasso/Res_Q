@@ -42,7 +42,7 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
             Thread.sleep(1000);
 
             // turn left 50 degrees
-            turnGyro(-50);
+            turnGyro(-47);
             Thread.sleep(200);
 
             // drive away from wall looking for red
@@ -67,7 +67,7 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
             drive(.1, 4.5);
 
             // turn left 50 degrees
-            turnGyro(-50);
+            turnGyro(-47);
             Thread.sleep(200);
 
             // drive away from wall looking for red line
@@ -91,7 +91,7 @@ public class AutoPeopleNormalColor_RED extends AutoPeopleNormal {
         // drop the climbers
         autoArm();
 
-        stop();
+        //stop();
 
         // error checking
             /*

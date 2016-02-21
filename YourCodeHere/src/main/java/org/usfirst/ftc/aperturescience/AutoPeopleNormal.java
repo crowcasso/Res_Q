@@ -62,7 +62,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private final double GAIN = .1;
 
     /* red arm constants */
-    private final double RED_UP = 0.8;
+    private final double RED_UP = 0.85;
     private final double RED_DOWN = 0.11;
 
     /* blue arm constants */
@@ -70,7 +70,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private final double BLUE_DOWN = 0.7;
 
     /* tape constants */
-    private final double LTAPE_UP = 0.9;
+    private final double LTAPE_UP = 0.85;
     private final double RTAPE_UP = 0.15;
 
     /* gryo/magnometer */
@@ -180,10 +180,16 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         // drop the bucket and shimmy
         wrist.setPosition(0.1);
         Thread.sleep(200);
-        for (int i = 0; i < 20; i++) {
+        /*for (int i = 0; i < 10; i++) {
             wrist.setPosition(0.15);
             Thread.sleep(100);
             wrist.setPosition(0.12);
+            Thread.sleep(100);
+        }*/
+        for (int i = 0; i < 25; i++) {
+            wrist.setPosition(0.15);
+            Thread.sleep(100);
+            wrist.setPosition(0.1);
             Thread.sleep(100);
         }
         Thread.sleep(500);

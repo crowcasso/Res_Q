@@ -88,7 +88,7 @@ public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
         // drop the climbers
         autoArm();
         
-        stop();
+        //stop();
 
         // error checking
             /*

@@ -78,6 +78,10 @@ public class Nasic7_3 extends OpMode {
         leftTape.setPosition(LTAPE_UP);
         rightTape.setPosition(RTAPE_UP);
 
+        if (alliance == ALLIANCE.BLUE) {
+            climberPos = BLUE_UP;
+        }
+
         // run certain motors using encoders
         motorL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorL.setDirection(DcMotor.Direction.REVERSE);
@@ -532,7 +536,7 @@ public class Nasic7_3 extends OpMode {
 
     /* blue arm constants */
     private final double BLUE_UP = 0.13;
-    private final double BLUE_DOWN = 0.7;
+    private final double BLUE_DOWN = 0.85;
     private final double CLIMBER_INCREMENT = 0.05;
 
     private double climberPos = RED_UP;
@@ -579,11 +583,11 @@ public class Nasic7_3 extends OpMode {
         prevClimberButton = gamepad1.dpad_left || gamepad1.dpad_right;
 
         if (gamepad1.dpad_up && prevManClimberButton == false){
-            climberPos += CLIMBER_INCREMENT;
+            climberPos -= CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
         else if (gamepad1.dpad_down && prevManClimberButton == false){
-            climberPos -= CLIMBER_INCREMENT;
+            climberPos += CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
         prevManClimberButton = gamepad1.dpad_down || gamepad1.dpad_up;
@@ -598,7 +602,7 @@ public class Nasic7_3 extends OpMode {
     final double TAPE_SPEED_IN = 1.0;
     private final double TAPE_CONTROL_INCREMENT = 0.05;
     private final double TAPE_FINE_CONTROL_INCREMENT = 0.01;
-    private final double LTAPE_UP = 0.88;
+    private final double LTAPE_UP = 0.81;
     private final double RTAPE_UP = 0.25;
     private final double TAPE_SERVO_RANGE = 0.75;
     private final double TAPE_LOCK_IN = 0.95;
@@ -714,4 +718,5 @@ public class Nasic7_3 extends OpMode {
  *  D0: armSwitch
  *  D1: ttSwitch
  *  I2C0: gyro
+ *  I2C1: colorSensor
  */
