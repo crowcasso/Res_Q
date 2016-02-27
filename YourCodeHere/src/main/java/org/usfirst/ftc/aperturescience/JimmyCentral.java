@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.swerverobotics.library.ClassFactory;
@@ -14,14 +15,14 @@ import org.swerverobotics.library.interfaces.Position;
 import org.swerverobotics.library.interfaces.Velocity;
 
 /**
- * AutoPeopleNormal (Autonomous)
+ * JimmyCentral (Autonomous)
  *
  * This is the main code for autonomous. Override main()
  * to add run specific instructions.
  *
  * @author FTC 5064 Aperture Science
  */
-public class AutoPeopleNormal extends SynchronousOpMode {
+public class JimmyCentral extends SynchronousOpMode {
 
     // Hardware
     private DcMotor arm;
@@ -40,10 +41,11 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private TouchSensor armLimit;
     private TouchSensor turnLimit;
     private ColorSensor colorSensor;
+    private UltrasonicSensor ultra;
 
     /* bucket constants */
-    private final double WDOWN = 0.53;
-    private final double WUP = 0.1;
+    private final double WDOWN = 0.47;
+    private final double WUP = 0.01;
 
     /* shield constants */
     private final double LSDOWN = 0.01;
@@ -62,11 +64,11 @@ public class AutoPeopleNormal extends SynchronousOpMode {
     private final double GAIN = .1;
 
     /* red arm constants */
-    private final double RED_UP = 0.85;
+    private final double RED_UP = 1.0;
     private final double RED_DOWN = 0.11;
 
     /* blue arm constants */
-    private final double BLUE_UP = 0.13;
+    private final double BLUE_UP = 0.0;
     private final double BLUE_DOWN = 0.7;
 
     /* tape constants */
@@ -100,6 +102,9 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         // touch sensors
         armLimit = hardwareMap.touchSensor.get("armSwitch");
         turnLimit = hardwareMap.touchSensor.get("ttSwitch");
+
+        // Range finder
+        ultra = hardwareMap.ultrasonicSensor.get("ultra");
 
         // initial servo positions
         leftShield.setPosition(LSDOWN);
@@ -161,7 +166,7 @@ public class AutoPeopleNormal extends SynchronousOpMode {
 
 
     /* code for moving the main arm and bucket to drop climbers */
-    private final double AUTO_ARM_MAX = 4400;
+    private final double AUTO_ARM_MAX = 5000;
     private final double NORMAL_ARM_SPEED = 0.4;
     private final double ARMPOS_MOVE_BUCKET = 1500;
     private final double ARMPOS_MOVE_BUCKET_RANGE = 4000;
@@ -204,6 +209,54 @@ public class AutoPeopleNormal extends SynchronousOpMode {
             System.out.println("armPos: " + armPos + ", arm power: " + -Range.clip(armPos / 200, 0.2, 1));
         }
 
+        System.out.println("arm is down, arm.isBusy: " + arm.isBusy());
+
+        arm.setPower(0);
+
+        System.out.println("armPos: " + arm.getCurrentPosition()
+                + ", armLimit: " + !armLimit.isPressed()
+                + ", arm.isBusy: " + arm.isBusy());
+
+        /* extra stops -- just in case */
+        for (int stops = 1; stops <= 5; stops++) {
+            arm.setPower(0);
+            Thread.sleep(100);
+            System.out.println("Stop # " + stops);
+        }
+
+        // bring the bucket up
+        wrist.setPosition(WUP);
+    }
+
+    public void autoArmNoJimmy() throws InterruptedException {
+        // bring the arm up
+        arm.setPower(NORMAL_ARM_SPEED);
+        double armPos = arm.getCurrentPosition();
+        while (arm.getCurrentPosition() < AUTO_ARM_MAX) {
+            armPos = arm.getCurrentPosition();
+            double wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);
+            wrist.setPosition(wristPos);
+        }
+        arm.setPower(0);
+
+        // drop the bucket and shimmy
+        wrist.setPosition(0);
+        Thread.sleep(2000);
+
+
+        // bring the arm down
+        int loopCount = 0;
+        while (armLimit.isPressed() && armPos >= 0) {
+            armPos = arm.getCurrentPosition();
+            double wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);
+            wrist.setPosition(wristPos);
+            arm.setPower(-Range.clip(armPos / 200.0, 0.1, 1));
+            Thread.sleep(20);  // do we need this?
+            loopCount++;
+            //System.out.println("armPos: " + armPos + ", arm power: " + -Range.clip(armPos / 200, 0.2, 1));
+        }
+
+        System.out.println("loopCount: " + loopCount);
         System.out.println("arm is down, arm.isBusy: " + arm.isBusy());
 
         arm.setPower(0);
@@ -319,6 +372,32 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         motorR.setPower(0.0);
     }
 
+    /* drive back without error correction */
+    public void driveBackDistance(double power, double distance, double toWall) throws InterruptedException {
+        int n = inchesToRotations(distance);
+        int start = motorR.getCurrentPosition();
+
+        for (int i = 0; i < 50; i++) {
+            if (withinDistance(toWall)) {
+                return;
+            }
+            Thread.sleep(10);
+        }
+
+        motorL.setPower(-power);
+        motorR.setPower(-power);
+
+        boolean value = false;
+        while ((motorR.getCurrentPosition() > (start - n)) && !(value = withinDistance(toWall))) {
+            telemetry.addData("within distace?", value);
+            telemetry.update();
+            Thread.sleep(10);
+        }
+
+        motorL.setPower(0.0);
+        motorR.setPower(0.0);
+    }
+
     /* drive back until we see white */
     public boolean driveBackToWhite(double power, double distance) throws InterruptedException {
         int n = inchesToRotations(distance);
@@ -346,6 +425,53 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         telemetry.update();
 
         return foundWhite;
+    }
+
+    /*  drive forward without error correction */
+    public void driveAcc(double distance, double rampDistance, double finalPower, double initPower ) throws InterruptedException {
+        int totalDist = inchesToRotations(distance);
+        int rampDist = inchesToRotations(rampDistance);
+        int start = motorR.getCurrentPosition();
+        finalPower = Range.clip(finalPower, .2, 1);
+        initPower = Range.clip(initPower, .2, 1);
+        if(initPower > finalPower) initPower = finalPower;
+        if(2*rampDist > totalDist) rampDist = totalDist / 2;
+
+        motorR.setPower(initPower);
+        motorL.setPower(initPower);
+        int motorPos = motorR.getCurrentPosition();
+        double newPower = 0;
+        double oldPower = 0;
+
+        while (motorPos < (start + totalDist)) {
+            if(motorPos < (start + rampDist)) {
+                double distThruRamp = ( (motorPos - start) ) / rampDist;
+                newPower = initPower + (distThruRamp * (finalPower - initPower));
+            } else if (motorPos < (start + totalDist - rampDist)) {
+                newPower = finalPower;
+            } else {
+                double distThruRamp = (totalDist - (motorPos - start)) / rampDist;
+                newPower = initPower + (distThruRamp * (finalPower - initPower));
+                //newPower = 0.2;
+            }
+            Thread.sleep(20);
+
+            newPower = Range.clip(newPower, initPower, finalPower);
+            if (oldPower != newPower) {
+                motorR.setPower(newPower);
+                motorL.setPower(newPower);
+                oldPower = newPower;
+                System.out.println("just set power to " + newPower);
+            }
+            motorPos = motorR.getCurrentPosition();
+            telemetry.addData("motorPos", motorPos);
+            telemetry.addData("newPower", newPower);
+            telemetry.update();
+            this.idle();
+        }
+
+        motorR.setPower(0);
+        motorL.setPower(0);
     }
 
     /* drive back until we see red or white */
@@ -489,6 +615,41 @@ public class AutoPeopleNormal extends SynchronousOpMode {
         telemetry.addData("heading", getHeading());
         telemetry.update();
 
+    }
+
+
+    private double currentDistance = 1000.0;
+    private long distanceTime = 0;
+    private final double FILTER_FACTOR = 0.2;
+    private final int MAX = 5;
+
+    public boolean withinDistance(double distance) {
+
+        // update the current distance
+        double newDistance = 0.0;
+        int validCount = 0;
+        for (int i = 0; i < MAX; i++) {
+            double level = ultra.getUltrasonicLevel();
+            if (level != 0.0 && level != 255.0) {
+                newDistance += level;
+                validCount++;
+            } else {
+                System.out.println("invalid level: " + level);
+            }
+        }
+
+        if (validCount != 0) {
+            newDistance = newDistance / validCount;
+            currentDistance = (currentDistance * (1.0 - FILTER_FACTOR)) + (newDistance * FILTER_FACTOR);
+            System.out.println("currentDistance: " + currentDistance);
+        }
+
+        if (currentDistance <= distance) {
+            System.out.println("It's true!");
+            return true;
+        }
+
+        return false;
     }
 
     /* is the color sensor seeing white? */

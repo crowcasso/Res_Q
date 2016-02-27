@@ -5,16 +5,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.swerverobotics.library.ClassFactory;
 import org.swerverobotics.library.SynchronousOpMode;
+import org.swerverobotics.library.interfaces.Disabled;
 import org.swerverobotics.library.interfaces.IBNO055IMU;
 import org.swerverobotics.library.interfaces.Position;
 import org.swerverobotics.library.interfaces.Velocity;
 
 /**
- * AutoPeopleNormal (Autonomous)
+ * JimmyCentral (Autonomous)
  *
  * This is the main code for autonomous. Override main()
  * to add run specific instructions.
@@ -22,10 +24,12 @@ import org.swerverobotics.library.interfaces.Velocity;
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous
+@Disabled
 public class TobiAuto extends SynchronousOpMode {
 
     // Hardware
     private DcMotor motor;
+    private UltrasonicSensor ultra;
 
     /* motor constants */
     private final int ENCODER_CPR = 1120;
@@ -34,6 +38,9 @@ public class TobiAuto extends SynchronousOpMode {
     private final double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
 
+    private double currentDistance = 1000.0;
+    private long distanceTime = 0;
+    private final double FILTER_FACTOR = 0.5;
 
     @Override
     protected void main() throws InterruptedException {
@@ -41,20 +48,60 @@ public class TobiAuto extends SynchronousOpMode {
         // motors
         motor = hardwareMap.dcMotor.get("motor");
 
+        // sensors
+        ultra = hardwareMap.ultrasonicSensor.get("ultra");
+
         // run certain motors using encoders
         motor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         waitForStart();
 
+        while (true) {
+            telemetry.addData("within 10cm?", withinDistance(10.0));
+            telemetry.update();
+            Thread.sleep(50);
+        }
+
+        /*
         driveAcc(50000, 22000, 1, .4);
         Thread.sleep(1000);
+        */
     }
+
+
+    public boolean withinDistance(double distance) {
+
+        // update the current distance
+        double newDistance = 0.0;
+        for (int i = 0; i < 5; i++) {
+            newDistance += ultra.getUltrasonicLevel();
+        }
+        newDistance = newDistance / 5;
+        currentDistance = (currentDistance * (1.0 - FILTER_FACTOR)) + (newDistance * FILTER_FACTOR);
+        System.out.println("currentDistance: " + currentDistance);
+
+        if (currentDistance <= distance && distanceTime > System.currentTimeMillis()) {
+            distanceTime = System.currentTimeMillis();
+        } else if (currentDistance > distance){
+            distanceTime = System.currentTimeMillis() + 10000000;
+        }
+
+        if (System.currentTimeMillis() > (distanceTime + 200)) {
+            System.out.println("It's true!");
+            return true;
+        }
+
+        return false;
+    }
+
 
     /* convert inches (distance) to rotations (motor) */
     public int inchesToRotations(double distance) {
         double rotations = distance/CIRCUMFERENCE;
         return (int)(ENCODER_CPR * rotations * GEAR_RATIO);
     }
+
+
 
     /*  drive forward without error correction */
     public void driveAcc(double totalDist, double rampDist, double finalPower, double initPower ) throws InterruptedException {

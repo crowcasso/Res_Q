@@ -5,8 +5,8 @@ package org.usfirst.ftc.aperturescience;
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous
-public class AutoPeopleNormalColor_BLUE extends AutoPeopleNormal {
+//@org.swerverobotics.library.interfaces.Autonomous
+public class AutoPeopleNormalColor_BLUE_old extends JimmyCentral {
 
     @Override
     public void main() throws InterruptedException {

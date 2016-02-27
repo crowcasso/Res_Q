@@ -13,7 +13,7 @@ import org.swerverobotics.library.interfaces.Position;
 import org.swerverobotics.library.interfaces.Velocity;
 
 /**
- * Nasic 7.2 - AutoPeopleNormal (Autonomous)
+ * Nasic 7.2 - JimmyCentral (Autonomous)
  *
  * @author FTC 5064 Aperture Science
  */

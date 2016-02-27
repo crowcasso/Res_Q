@@ -465,8 +465,8 @@ public class Nasic7_3 extends OpMode {
 
     /** MOVE THE BUCKET **/
 
-    private final double WDOWN = 0.6;
-    private final double WUP = 0.1;
+    private final double WDOWN = 0.47;
+    private final double WUP = 0.01;
 
     private boolean prevWristButton = false;
     private boolean prevWristMan = false;
@@ -531,12 +531,21 @@ public class Nasic7_3 extends OpMode {
         telemetry.addData("Wrist Pos", wristPos);
     }
     /* red arm constants */
-    private final double RED_UP = 0.8;
-    private final double RED_DOWN = 0.11;
+    private final double RED_UP = 1.0;
+    private final double RED_DOWN = 0.25;
+
+    private final double RED_FIRST = RED_DOWN;
+    private final double RED_SECOND = 0.17;
+    private final double RED_THIRD = 0.00;
 
     /* blue arm constants */
-    private final double BLUE_UP = 0.13;
-    private final double BLUE_DOWN = 0.85;
+    private final double BLUE_UP = 0.0;
+    private final double BLUE_DOWN = 0.72;
+
+    private final double BLUE_FIRST = BLUE_DOWN;
+    private final double BLUE_SECOND = 0.78;
+    private final double BLUE_THIRD = 1.00;
+
     private final double CLIMBER_INCREMENT = 0.05;
 
     private double climberPos = RED_UP;
@@ -545,11 +554,25 @@ public class Nasic7_3 extends OpMode {
 
     private void redClimberArmControl() {
 
-        if ((gamepad1.dpad_left || gamepad1.dpad_right) && prevClimberButton == false) {
-            if (climberPos != RED_DOWN) {
-                climberPos = RED_DOWN;
+        if ((gamepad1.dpad_left) && prevClimberButton == false) {
+            if (climberPos != RED_UP) {
+                climberPos = RED_UP;
             }
             else{
+                climberPos = RED_DOWN;
+            }
+        }
+
+        if ((gamepad1.dpad_right) && prevClimberButton == false) {
+            if (Math.abs(climberPos - RED_UP) < 0.03) {
+                climberPos = RED_FIRST;
+            }
+            else if (Math.abs(climberPos - RED_FIRST) < 0.03) {
+                climberPos = RED_SECOND;
+            }
+            else if (Math.abs(climberPos - RED_SECOND) < 0.03) {
+                climberPos = RED_THIRD;
+            } else {
                 climberPos = RED_UP;
             }
         }
@@ -557,11 +580,11 @@ public class Nasic7_3 extends OpMode {
         prevClimberButton = gamepad1.dpad_left || gamepad1.dpad_right;
 
         if (gamepad1.dpad_up && prevManClimberButton == false){
-            climberPos -= CLIMBER_INCREMENT;
+            climberPos += CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
         else if (gamepad1.dpad_down && prevManClimberButton == false){
-            climberPos += CLIMBER_INCREMENT;
+            climberPos -= CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
         prevManClimberButton = gamepad1.dpad_down || gamepad1.dpad_up;
@@ -571,11 +594,25 @@ public class Nasic7_3 extends OpMode {
 
     private void blueClimberArmControl() {
 
-        if ((gamepad1.dpad_left || gamepad1.dpad_right) && prevClimberButton == false) {
+        if ((gamepad1.dpad_left) && prevClimberButton == false) {
             if (climberPos != BLUE_DOWN) {
                 climberPos = BLUE_DOWN;
             }
             else{
+                climberPos = BLUE_UP;
+            }
+        }
+
+        if ((gamepad1.dpad_right) && prevClimberButton == false) {
+            if (Math.abs(climberPos - BLUE_UP) < 0.03) {
+                climberPos = BLUE_FIRST;
+            }
+            else if (Math.abs(climberPos - BLUE_FIRST) < 0.03) {
+                climberPos = BLUE_SECOND;
+            }
+            else if (Math.abs(climberPos - BLUE_SECOND) < 0.03) {
+                climberPos = BLUE_THIRD;
+            } else {
                 climberPos = BLUE_UP;
             }
         }
@@ -598,7 +635,7 @@ public class Nasic7_3 extends OpMode {
     boolean prevTapeServoButton = false;
     //boolean prevTapeMotorButton = false;
     boolean isTapeLocked = false;
-    final double TAPE_SPEED_OUT = 0.7;
+    final double TAPE_SPEED_OUT = 1.0;
     final double TAPE_SPEED_IN = 1.0;
     private final double TAPE_CONTROL_INCREMENT = 0.05;
     private final double TAPE_FINE_CONTROL_INCREMENT = 0.01;

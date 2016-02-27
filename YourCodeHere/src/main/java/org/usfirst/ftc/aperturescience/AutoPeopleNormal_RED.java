@@ -6,7 +6,7 @@ package org.usfirst.ftc.aperturescience;
  * @author FTC 5064 Aperture Science
  */
 //@org.swerverobotics.library.interfaces.Autonomous
-public class AutoPeopleNormal_RED extends AutoPeopleNormal {
+public class AutoPeopleNormal_RED extends JimmyCentral {
 
     @Override
     public void main() throws InterruptedException {
@@ -33,7 +33,7 @@ public class AutoPeopleNormal_RED extends AutoPeopleNormal {
             Thread.sleep(200);
 
             // drive back 10 inches
-            driveBack(.3, 10);
+            driveBackDistance(.3, 10, 10);
             Thread.sleep(200);
 
             // drop the climbers

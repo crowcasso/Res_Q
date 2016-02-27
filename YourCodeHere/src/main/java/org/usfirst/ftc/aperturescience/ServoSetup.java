@@ -76,7 +76,7 @@ public class ServoSetup extends OpMode {
         tapeLock.setPosition(position);
         blueArm.setPosition(position);
 
-        servo = leftTape;
+        servo = blueArm;
 
         arm.setPower(0);
 
