@@ -56,11 +56,13 @@ public class TobiAuto extends SynchronousOpMode {
 
         waitForStart();
 
+        /*
         while (true) {
             telemetry.addData("within 10cm?", withinDistance(10.0));
             telemetry.update();
             Thread.sleep(50);
         }
+        */
 
         /*
         driveAcc(50000, 22000, 1, .4);

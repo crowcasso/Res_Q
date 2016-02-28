@@ -165,11 +165,7 @@ public class JimmyCentral extends SynchronousOpMode {
     }
 
 
-    /* code for moving the main arm and bucket to drop climbers */
-    private final double AUTO_ARM_MAX = 5000;
-    private final double NORMAL_ARM_SPEED = 0.4;
-    private final double ARMPOS_MOVE_BUCKET = 1500;
-    private final double ARMPOS_MOVE_BUCKET_RANGE = 4000;
+
 
     public void autoArm() throws InterruptedException {
         // bring the arm up
@@ -185,6 +181,7 @@ public class JimmyCentral extends SynchronousOpMode {
         // drop the bucket and shimmy
         wrist.setPosition(0.1);
         Thread.sleep(200);
+
         /*for (int i = 0; i < 10; i++) {
             wrist.setPosition(0.15);
             Thread.sleep(100);
@@ -274,6 +271,78 @@ public class JimmyCentral extends SynchronousOpMode {
 
         // bring the bucket up
         wrist.setPosition(WUP);
+    }
+
+    /* code for moving the main arm and bucket to drop climbers */
+    private final double AUTO_ARM_MAX = 7050;
+    private final double NORMAL_ARM_SPEED = 0.8;
+    private final double ARMPOS_MOVE_BUCKET = 1500;
+    private final double ARMPOS_MOVE_BUCKET_RANGE = 4000;
+    private boolean doBucket = true;
+
+    private double armPos2 = 0.0;
+    public void autoArmUp() throws InterruptedException {
+        // bring the arm up
+        arm.setPower(NORMAL_ARM_SPEED);
+        armPos2 = arm.getCurrentPosition();
+        while (arm.getCurrentPosition() < AUTO_ARM_MAX) {
+            armPos2 = arm.getCurrentPosition();
+            double wristPos = Range.clip(((armPos2 - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);//--------
+            if(arm.getCurrentPosition() > (AUTO_ARM_MAX - 2000)) {
+            doBucket = false;
+            wrist.setPosition(0.7);
+             } else {
+             wrist.setPosition(wristPos);
+             }
+        }
+        arm.setPower(0);
+
+        // drop the bucket
+        doBucket = true;
+    }
+
+    public void autoArmDown() throws InterruptedException {
+        // bring the arm down
+        int loopCount = 0;
+        while (armLimit.isPressed() && armPos2 >= 0) {
+            armPos2 = arm.getCurrentPosition();
+            double wristPos = Range.clip(((armPos2 - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);
+            if (armPos2 < ARMPOS_MOVE_BUCKET) {
+                wristPos = WUP;
+            }
+            wrist.setPosition(wristPos);
+            arm.setPower(-Range.clip(armPos2 / 200.0, 0.05, 1));
+            Thread.sleep(20);  // do we need this?
+            loopCount++;
+            System.out.println("armPos: " + armPos2 + ", arm power: " + -Range.clip(armPos2 / 200, 0.05, 1));
+        }
+
+        System.out.println("loopCount: " + loopCount);
+        System.out.println("arm is down, arm.isBusy: " + arm.isBusy());
+
+        arm.setPower(0);
+
+        System.out.println("armPos: " + arm.getCurrentPosition()
+                + ", armLimit: " + !armLimit.isPressed()
+                + ", arm.isBusy: " + arm.isBusy());
+
+        /* extra stops -- just in case */
+        for (int stops = 1; stops <= 5; stops++) {
+            arm.setPower(0);
+            Thread.sleep(100);
+            System.out.println("Stop # " + stops);
+        }
+
+        // bring the bucket up
+        wrist.setPosition(WUP);
+    }
+
+    public void sweeperOn() {
+        sweeper.setPower(-1.0);
+    }
+
+    public void sweeperOff() {
+        sweeper.setPower(0.0);
     }
 
     /* convert inches (distance) to rotations (motor) */
@@ -373,29 +442,30 @@ public class JimmyCentral extends SynchronousOpMode {
     }
 
     /* drive back without error correction */
-    public void driveBackDistance(double power, double distance, double toWall) throws InterruptedException {
+    public double driveBackDistance(double power, double distance, double toWall) throws InterruptedException {
         int n = inchesToRotations(distance);
         int start = motorR.getCurrentPosition();
 
-        for (int i = 0; i < 50; i++) {
-            if (withinDistance(toWall)) {
-                return;
-            }
+        for (int i = 0; i < 5; i++) {
+            getDistance();
             Thread.sleep(10);
         }
 
-        motorL.setPower(-power);
-        motorR.setPower(-power);
-
-        boolean value = false;
-        while ((motorR.getCurrentPosition() > (start - n)) && !(value = withinDistance(toWall))) {
-            telemetry.addData("within distace?", value);
-            telemetry.update();
-            Thread.sleep(10);
+        double diff = 0.0;
+        while (Math.abs(diff = (getDistance() - toWall)) > 4) {
+            if (diff < 0) {
+                motorL.setPower(power);
+                motorR.setPower(power);
+            } else {
+                motorL.setPower(-power);
+                motorR.setPower(-power);
+            }
         }
 
         motorL.setPower(0.0);
         motorR.setPower(0.0);
+
+        return currentDistance;
     }
 
     /* drive back until we see white */
@@ -405,13 +475,25 @@ public class JimmyCentral extends SynchronousOpMode {
         double red = colorSensor.red();
         double blue = colorSensor.blue();
         double green = colorSensor.green();
+        double motorCount = 0;
+        double motorPower = -power;
 
-        motorL.setPower(-power);
-        motorR.setPower(-power);
+        /*if(start > n * 0.8) {
+            motorPower = -power / 2;
+            motorL.setPower(motorPower);
+            motorR.setPower(motorPower);
+        } else {
+            motorPower = -power;
+            motorL.setPower(motorPower);
+            motorR.setPower(motorPower);
+        }*/
+
+        motorL.setPower(motorPower);
+        motorR.setPower(motorPower);
 
         boolean foundWhite = false;
 
-        while (!(foundWhite = isWhite()) && motorR.getCurrentPosition() > (start - n)) {
+        while (!(foundWhite = isWhite()) && (motorR.getCurrentPosition() > (start - n))) {
             Thread.sleep(10);
         }
 
@@ -584,10 +666,10 @@ public class JimmyCentral extends SynchronousOpMode {
         setZero();
 
         if (angle > 0) {    // right turn
-            angle -= 6;     // lag
+            angle -= 13;     // lag
 
-            motorL.setPower(-0.10);
-            motorR.setPower(0.10);
+            motorL.setPower(-0.30);
+            motorR.setPower(0.30);
 
             while (getHeading() - zero < angle){
                 Thread.sleep(5);
@@ -596,10 +678,10 @@ public class JimmyCentral extends SynchronousOpMode {
             motorR.setPower(0.0);
 
         } else {            // left turn
-            angle += 6;     // lag
+            angle += 13;     // lag
 
-            motorL.setPower(0.10);
-            motorR.setPower(-0.10);
+            motorL.setPower(0.30);
+            motorR.setPower(-0.30);
 
             while (getHeading() - zero > angle){
                 Thread.sleep(5);
@@ -618,19 +700,19 @@ public class JimmyCentral extends SynchronousOpMode {
     }
 
 
-    private double currentDistance = 1000.0;
+    private double currentDistance = 50.0;
     private long distanceTime = 0;
     private final double FILTER_FACTOR = 0.2;
-    private final int MAX = 5;
+    private final int MAX_READINGS = 5;
 
-    public boolean withinDistance(double distance) {
-
-        // update the current distance
+    public double getDistance() {
+        // grab a bunch of readings and average them into one
         double newDistance = 0.0;
         int validCount = 0;
-        for (int i = 0; i < MAX; i++) {
+        for (int i = 0; i < MAX_READINGS; i++) {
             double level = ultra.getUltrasonicLevel();
-            if (level != 0.0 && level != 255.0) {
+            // throw out any invalid readings
+            if (level > 0.0 && level < 255.0) {
                 newDistance += level;
                 validCount++;
             } else {
@@ -638,18 +720,15 @@ public class JimmyCentral extends SynchronousOpMode {
             }
         }
 
+        // make sure we got at least one good reading
         if (validCount != 0) {
             newDistance = newDistance / validCount;
-            currentDistance = (currentDistance * (1.0 - FILTER_FACTOR)) + (newDistance * FILTER_FACTOR);
-            System.out.println("currentDistance: " + currentDistance);
+            currentDistance = newDistance;
+            //currentDistance = (currentDistance * (1.0 - FILTER_FACTOR)) + (newDistance * FILTER_FACTOR);
+            System.out.println("currentDistance: " + currentDistance + " using " + validCount + " readings");
         }
 
-        if (currentDistance <= distance) {
-            System.out.println("It's true!");
-            return true;
-        }
-
-        return false;
+        return currentDistance;
     }
 
     /* is the color sensor seeing white? */
