@@ -1,13 +1,16 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoPeopleNormal_RED (Autonomous)
+ * AutoPeoplePosition1 (Autonomous)
+ *
+ * Slow and accurate.
  *
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy", group="Red")
 public class AutoRedPosition1 extends AutoCommon {
 
+    // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
 
     @Override
@@ -26,40 +29,39 @@ public class AutoRedPosition1 extends AutoCommon {
         if (foundWhite) {
             // yeah! found the white line
 
-            // back up 4.5 inches
+            // back up 3.5 inches
             driveBack(.3, 3.5);
             Thread.sleep(500);
 
-            // turn left 55 degrees
+            // turn left 50 degrees
             turnGyroSlow(-50);
             Thread.sleep(200);
 
-            // drive back to wall using the ultrasonic
+            // drive until we're the right distance to the wall
             driveToDistance(.2, 6, THE_DISTANCE);
 
         } else {
             // did not find white line -- let's try to correct
 
-            // drive forward 4.5 inches
+            // drive forward 3.5 inches
             drive(.3, 3.5);
             Thread.sleep(500);
 
-            // turn left 57 degrees
+            // turn left 56 degrees
             turnGyroSlow(-56);
             Thread.sleep(500);
 
-            // drive back to wall using ultrasonic
+            // drive until we're the right distance to the wall
             driveToDistance(.2, 6, THE_DISTANCE);
         }
 
         // bring the arm up
         autoArmUp();
 
-
         // need to push blocks/balls away
         sweeperOn();
 
-        // drive forward to pull off the climbers
+        // drive forward slowly to pull off the climbers
         drive(.08, 12);
 
         // bring the arm back into the robot to get ready for TeleOp

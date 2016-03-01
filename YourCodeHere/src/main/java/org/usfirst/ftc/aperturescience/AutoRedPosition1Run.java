@@ -1,13 +1,16 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoPeopleNormal_RED (Autonomous)
+ * AutoRedPosition1Run (Autonomous)
+ *
+ * Fast climber drop from position close to the mountain.
  *
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy Run", group="Red")
 public class AutoRedPosition1Run extends AutoCommon {
 
+    // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
 
     @Override
@@ -26,15 +29,14 @@ public class AutoRedPosition1Run extends AutoCommon {
         if (foundWhite) {
             // yeah! found the white line
 
-            // back up 4.5 inches
-            //driveBack(.3, 4.5);
+            // pause to give the gyro time to settle
             Thread.sleep(500);
 
-            // turn left 55 degrees
+            // turn left 550 degrees
             turnGyro(-50);
             Thread.sleep(200);
 
-            // drive back to wall using the ultrasonic
+            // drive until we're the right distance to the wall
             driveToDistance(.2, 6, THE_DISTANCE);
 
         } else {
@@ -44,17 +46,16 @@ public class AutoRedPosition1Run extends AutoCommon {
             drive(.3, 4.5);
             Thread.sleep(500);
 
-            // turn left 57 degrees
+            // turn left 56 degrees
             turnGyro(-56);
             Thread.sleep(500);
 
-            // drive back to wall using ultrasonic
+            // drive until we're the right distance to the wall
             driveToDistance(.2, 6, THE_DISTANCE);
         }
 
         // bring the arm up
         autoArmUp();
-
 
         // need to push blocks/balls away
         sweeperOn();
@@ -76,7 +77,5 @@ public class AutoRedPosition1Run extends AutoCommon {
 
         // turn the sweeper off
         sweeperOff();
-
-
     }
 }

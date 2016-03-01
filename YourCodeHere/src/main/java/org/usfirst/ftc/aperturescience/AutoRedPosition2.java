@@ -1,13 +1,14 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoPeopleNormal_RED (Autonomous)
+ * AutoRedPosition2 (Autonomous)
  *
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy Wait", group="Red")
 public class AutoRedPosition2 extends AutoCommon {
 
+    // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
 
     @Override
@@ -19,8 +20,10 @@ public class AutoRedPosition2 extends AutoCommon {
         // pull out the tapes to make room for the arm
         setTapes();
 
+        // pause for 3 seconds
         Thread.sleep(3000);
 
+        // move the robot toward the mountain
         driveBack(.2, 6);
         Thread.sleep(500);
         turnGyroSlow(-90);
@@ -30,18 +33,17 @@ public class AutoRedPosition2 extends AutoCommon {
         turnGyroSlow(57);
         Thread.sleep(500);
 
-        // drive back 87 inches or until we find the white line
+        // drive back 90 inches or until we find the white line
         boolean foundWhite = driveBackToWhite(.6, 90);
         Thread.sleep(200);  // small pause
 
         if (foundWhite) {
             // yeah! found the white line
 
-            // back up 4.5 inches
-            //driveBack(.3, 4.5);
+            // pause to let the gyro settle
             Thread.sleep(500);
 
-            // turn left 55 degrees
+            // turn left 49 degrees
             turnGyro(-49);
             Thread.sleep(200);
 
@@ -51,18 +53,17 @@ public class AutoRedPosition2 extends AutoCommon {
         } else {
             // did not find white line -- let's try to correct
 
-            // drive forward 4.5 inches
+            // drive forward 10 inches
             drive(.3, 10);
             Thread.sleep(500);
 
-            // turn left 57 degrees
+            // turn left 56 degrees
             turnGyro(-56);
             Thread.sleep(500);
 
             // drive back to wall using ultrasonic
             driveToDistance(.2, 6, THE_DISTANCE);
         }
-
 
         // bring the arm up
         autoArmUp();
@@ -81,6 +82,5 @@ public class AutoRedPosition2 extends AutoCommon {
 
         // back into the red box
         driveBack(.5, 12);
-
     }
 }
