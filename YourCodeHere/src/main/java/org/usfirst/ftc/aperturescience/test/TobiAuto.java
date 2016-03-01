@@ -1,4 +1,4 @@
-package org.usfirst.ftc.aperturescience;
+package org.usfirst.ftc.aperturescience.test;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +16,7 @@ import org.swerverobotics.library.interfaces.Position;
 import org.swerverobotics.library.interfaces.Velocity;
 
 /**
- * JimmyCentral (Autonomous)
+ * AutoCommon (Autonomous)
  *
  * This is the main code for autonomous. Override main()
  * to add run specific instructions.

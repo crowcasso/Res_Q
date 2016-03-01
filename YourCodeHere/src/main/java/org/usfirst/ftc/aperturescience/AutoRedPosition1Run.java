@@ -5,8 +5,8 @@ package org.usfirst.ftc.aperturescience;
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy Wait", group="Red")
-public class AutoRedPosition2 extends AutoCommon {
+@org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy Run", group="Red")
+public class AutoRedPosition1Run extends AutoCommon {
 
     private final double THE_DISTANCE = 28;
 
@@ -19,19 +19,8 @@ public class AutoRedPosition2 extends AutoCommon {
         // pull out the tapes to make room for the arm
         setTapes();
 
-        Thread.sleep(3000);
-
-        driveBack(.2, 6);
-        Thread.sleep(500);
-        turnGyroSlow(-90);
-        Thread.sleep(500);
-        driveBack(.2, 35);
-        Thread.sleep(500);
-        turnGyroSlow(57);
-        Thread.sleep(500);
-
         // drive back 87 inches or until we find the white line
-        boolean foundWhite = driveBackToWhite(.6, 90);
+        boolean foundWhite = driveBackToWhite(.5, 87);
         Thread.sleep(200);  // small pause
 
         if (foundWhite) {
@@ -42,7 +31,7 @@ public class AutoRedPosition2 extends AutoCommon {
             Thread.sleep(500);
 
             // turn left 55 degrees
-            turnGyro(-49);
+            turnGyro(-50);
             Thread.sleep(200);
 
             // drive back to wall using the ultrasonic
@@ -52,7 +41,7 @@ public class AutoRedPosition2 extends AutoCommon {
             // did not find white line -- let's try to correct
 
             // drive forward 4.5 inches
-            drive(.3, 10);
+            drive(.3, 4.5);
             Thread.sleep(500);
 
             // turn left 57 degrees
@@ -63,9 +52,9 @@ public class AutoRedPosition2 extends AutoCommon {
             driveToDistance(.2, 6, THE_DISTANCE);
         }
 
-
         // bring the arm up
         autoArmUp();
+
 
         // need to push blocks/balls away
         sweeperOn();
@@ -73,14 +62,21 @@ public class AutoRedPosition2 extends AutoCommon {
         // drive forward to pull off the climbers
         drive(.1, 12);
 
+        // bring the arm vertical for repositioning
+        autoArmVert();
+
+        // reposition for the corner
+        turnGyro(80);
+
+        // back into the red box
+        driveBack(.5, 40);
+
         // bring the arm back into the robot to get ready for TeleOp
         autoArmDown();
 
         // turn the sweeper off
         sweeperOff();
 
-        // back into the red box
-        driveBack(.5, 12);
 
     }
 }

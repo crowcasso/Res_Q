@@ -6,9 +6,9 @@ package org.usfirst.ftc.aperturescience;
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy", group="Red")
-public class AutoRedPosition1 extends JimmyCentral {
+public class AutoRedPosition1 extends AutoCommon {
 
-    private final double THE_DISTANCE = 31;
+    private final double THE_DISTANCE = 28;
 
     @Override
     public void main() throws InterruptedException {
@@ -16,84 +16,59 @@ public class AutoRedPosition1 extends JimmyCentral {
         // everything up to waitForStart
         super.main();
 
-        // alliance specific code
-        //while (opModeIsActive()) {
-
-        // drive back 20 inches
-        /*
-        driveBack(.3, 20);
-        Thread.sleep(1000);
-
-        // turn left 40 degrees
-        turnGyro(-40);
-        Thread.sleep(200);
-        */
-
-        // pull out the climber arm
-        setRedArm();
-
-        // pull out the tapes
+        // pull out the tapes to make room for the arm
         setTapes();
 
-        // drive back 69 inches or until we find the white line
+        // drive back 87 inches or until we find the white line
         boolean foundWhite = driveBackToWhite(.5, 87);
-        Thread.sleep(200);
+        Thread.sleep(200);  // small pause
 
-        double distance = 0.0;
-        if (foundWhite) {   // yeah! found the white line
+        if (foundWhite) {
+            // yeah! found the white line
 
             // back up 4.5 inches
-            driveBack(.3, 4.5);
-            Thread.sleep(1000);
+            driveBack(.3, 3.5);
+            Thread.sleep(500);
 
             // turn left 55 degrees
-            turnGyro(-55);
+            turnGyroSlow(-50);
             Thread.sleep(200);
 
-            // drive back to wall
-            distance = driveBackDistance(.2, 6, THE_DISTANCE);
+            // drive back to wall using the ultrasonic
+            driveToDistance(.2, 6, THE_DISTANCE);
 
         } else {
             // did not find white line -- let's try to correct
 
             // drive forward 4.5 inches
-            drive(.3, 4.5);
-
-            // turn left 57 degrees
-            turnGyro(-57);
+            drive(.3, 3.5);
             Thread.sleep(500);
 
-            // drive back to wall
-            distance = driveBackDistance(.2, 6, THE_DISTANCE);
+            // turn left 57 degrees
+            turnGyroSlow(-56);
+            Thread.sleep(500);
+
+            // drive back to wall using ultrasonic
+            driveToDistance(.2, 6, THE_DISTANCE);
         }
 
+        // bring the arm up
         autoArmUp();
 
-        // drive out
+
+        // need to push blocks/balls away
         sweeperOn();
 
-        drive(.3, 12);
+        // drive forward to pull off the climbers
+        drive(.08, 12);
 
+        // bring the arm back into the robot to get ready for TeleOp
         autoArmDown();
 
+        // turn the sweeper off
         sweeperOff();
 
+        // back into the red box
         driveBack(.5, 12);
-
-        // drop the climbers
-        //autoArmNoJimmy();
-
-        //stop();
-
-        // error checking
-            /*
-            Thread.sleep(1000);
-            telemetry.addData("Final Heading", getHeading());
-            telemetry.update();
-            */
-
-        // we're done!
-        //break;
-        //}
     }
 }

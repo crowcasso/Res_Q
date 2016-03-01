@@ -1,4 +1,4 @@
-package org.usfirst.ftc.aperturescience;
+package org.usfirst.ftc.aperturescience.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
