@@ -1,14 +1,14 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoRedPosition1 (Autonomous)
+ * AutoRedPosition1Run (Autonomous)
  *
- * Slow and accurate.
+ * Fast climber drop from position close to the mountain.
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy", group="Red")
-public class AutoRedPosition1 extends AutoCommon {
+@org.swerverobotics.library.interfaces.Autonomous(name="BLUE Mountain Man Jimmy Run", group="Red")
+public class AutoBluePosition1Run extends AutoCommon {
 
     // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
@@ -29,12 +29,11 @@ public class AutoRedPosition1 extends AutoCommon {
         if (foundWhite) {
             // yeah! found the white line
 
-            // back up 3.5 inches
-            driveBack(.3, 3.5);
+            // pause to give the gyro time to settle
             Thread.sleep(500);
 
-            // turn left 50 degrees
-            turnGyroSlow(-50);
+            // turn left 550 degrees
+            turnGyro(62);
             Thread.sleep(200);
 
             // drive until we're the right distance to the wall
@@ -43,12 +42,12 @@ public class AutoRedPosition1 extends AutoCommon {
         } else {
             // did not find white line -- let's try to correct
 
-            // drive forward 3.5 inches
-            drive(.3, 3.5);
+            // drive forward 4.5 inches
+            drive(.3, 4.5);
             Thread.sleep(500);
 
             // turn left 56 degrees
-            turnGyroSlow(-56);
+            turnGyro(64);
             Thread.sleep(500);
 
             // drive until we're the right distance to the wall
@@ -61,16 +60,22 @@ public class AutoRedPosition1 extends AutoCommon {
         // need to push blocks/balls away
         sweeperOn();
 
-        // drive forward slowly to pull off the climbers
-        drive(.08, 12);
+        // drive forward to pull off the climbers
+        drive(.1, 12);
+
+        // bring the arm vertical for repositioning
+        autoArmVert();
+
+        // reposition for the corner
+        turnGyro(-80);
+
+        // back into the red box
+        driveBack(.5, 40);
 
         // bring the arm back into the robot to get ready for TeleOp
         autoArmDown();
 
         // turn the sweeper off
         sweeperOff();
-
-        // back into the red box
-        driveBack(.5, 12);
     }
 }

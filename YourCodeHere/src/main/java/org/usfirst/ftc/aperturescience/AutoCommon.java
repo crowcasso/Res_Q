@@ -202,10 +202,11 @@ public class AutoCommon extends SynchronousOpMode {
                 wristPos = WUP;
             }
             wrist.setPosition(wristPos);
-            arm.setPower(-Range.clip(armPos2 / 200.0, 0.05, 1));
+            double armPower = -Range.clip(armPos2 / 200.0, 0.05, 1);
+            arm.setPower(armPower);
             Thread.sleep(20);  // do we need this?
             loopCount++;
-            System.out.println("armPos: " + armPos2 + ", arm power: " + -Range.clip(armPos2 / 200, 0.05, 1));
+            System.out.println("armPos: " + armPos2 + ", arm power: " + armPower);
         }
 
         System.out.println("loopCount: " + loopCount);
@@ -511,7 +512,7 @@ public class AutoCommon extends SynchronousOpMode {
 
     /* is the color sensor seeing white? */
     public boolean isWhite() {
-        if (colorSensor.red() > 6.0 && colorSensor.blue() > 6.0 && colorSensor.green() > 6.0){
+        if (colorSensor.red() >= 6.0 && colorSensor.blue() >= 6.0 && colorSensor.green() >= 6.0){
             return true;
         }
         return false;

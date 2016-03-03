@@ -171,16 +171,18 @@ public class Nasic7_3 extends OpMode {
 
     /** SWEEP UP BLOCKS **/
 
-    private final double SWEEPER_POWER = 1.0;
+    private final double SWEEPER_POWER_IN = 0.5;
+    private final double SWEEPER_POWER_OUT = 1.0;
+
     private double sweeperPower = 0.0;
 
     private void sweeperControl() {
         if (gamepad1.a) {
-            sweeperPower = SWEEPER_POWER;
+            sweeperPower = SWEEPER_POWER_IN;
         } else if (gamepad1.b) {
             sweeperPower = 0.0;
         } else if (gamepad1.y) {
-            sweeperPower = -SWEEPER_POWER;
+            sweeperPower = -SWEEPER_POWER_OUT;
         }
         sweeper.setPower(sweeperPower);
     }
@@ -199,7 +201,7 @@ public class Nasic7_3 extends OpMode {
     private final double TT_ARMLIMIT_POS = 4600;
     private final double AUTO_ARM_MAX = 6500;
     private final double ARM_BACK_BUCKET_UP = 1.0;
-    private final double ARM_BACK_BUCKET_DOWN = 0.45;
+    private final double ARM_BACK_BUCKET_DOWN = 0.35;
     private final double ARM_BACK_TT_TURN = 1150;
     private final double NORMAL_TABLE_SPEED = 0.4;
     private final double LOW_TABLE_SPEED = 0.2;
@@ -249,7 +251,7 @@ public class Nasic7_3 extends OpMode {
         // automatic arm raise
         if (autoArmUp) {
             //System.out.println("autoArmUp");
-            wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), .2, 1);
+            wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), .1, 1);
             wrist.setPosition(wristPos);
 
             if(armPos > ARMPOS_CLEARED_SWITCH) {
@@ -501,13 +503,13 @@ public class Nasic7_3 extends OpMode {
         }
 
         if (wristWay == 1){
-            sweeper.setPower(SWEEPER_POWER);
+            sweeper.setPower(SWEEPER_POWER_OUT);
             if(System.currentTimeMillis() > wristTime) {
                 wristWay = 0;
             }
         }
         else if (wristWay == -1) {
-            sweeper.setPower(-SWEEPER_POWER);
+            sweeper.setPower(-SWEEPER_POWER_OUT);
             if (System.currentTimeMillis() > wristTime) {
                 wristWay = 0;
             }

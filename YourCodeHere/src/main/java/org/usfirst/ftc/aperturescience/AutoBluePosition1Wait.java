@@ -1,14 +1,14 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoRedPosition1 (Autonomous)
+ * AutoRedPosition1Wait (Autonomous)
  *
- * Slow and accurate.
+ * Pause first, then move quickly to drop climbers.
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy", group="Red")
-public class AutoRedPosition1 extends AutoCommon {
+@org.swerverobotics.library.interfaces.Autonomous(name="BLUE Mountain Man Jimmy Wait", group="Red")
+public class AutoBluePosition1Wait extends AutoCommon {
 
     // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
@@ -22,6 +22,9 @@ public class AutoRedPosition1 extends AutoCommon {
         // pull out the tapes to make room for the arm
         setTapes();
 
+        // wait 14.5 seconds
+        Thread.sleep(14500);
+
         // drive back 87 inches or until we find the white line
         boolean foundWhite = driveBackToWhite(.5, 87);
         Thread.sleep(200);  // small pause
@@ -29,40 +32,40 @@ public class AutoRedPosition1 extends AutoCommon {
         if (foundWhite) {
             // yeah! found the white line
 
-            // back up 3.5 inches
-            driveBack(.3, 3.5);
+            // pause to give the gyro time to settle
             Thread.sleep(500);
 
             // turn left 50 degrees
-            turnGyroSlow(-50);
+            turnGyro(62);
             Thread.sleep(200);
 
-            // drive until we're the right distance to the wall
+            // drive back to wall using the ultrasonic
             driveToDistance(.2, 6, THE_DISTANCE);
 
         } else {
             // did not find white line -- let's try to correct
 
-            // drive forward 3.5 inches
-            drive(.3, 3.5);
+            // drive forward 4.5 inches
+            drive(.3, 4.5);
             Thread.sleep(500);
 
             // turn left 56 degrees
-            turnGyroSlow(-56);
+            turnGyro(64);
             Thread.sleep(500);
 
-            // drive until we're the right distance to the wall
+            // drive back to wall using ultrasonic
             driveToDistance(.2, 6, THE_DISTANCE);
         }
 
         // bring the arm up
         autoArmUp();
 
+
         // need to push blocks/balls away
         sweeperOn();
 
-        // drive forward slowly to pull off the climbers
-        drive(.08, 12);
+        // drive forward to pull off the climbers
+        drive(.1, 12);
 
         // bring the arm back into the robot to get ready for TeleOp
         autoArmDown();
@@ -70,7 +73,7 @@ public class AutoRedPosition1 extends AutoCommon {
         // turn the sweeper off
         sweeperOff();
 
-        // back into the red box
+        // back into the blue box
         driveBack(.5, 12);
     }
 }

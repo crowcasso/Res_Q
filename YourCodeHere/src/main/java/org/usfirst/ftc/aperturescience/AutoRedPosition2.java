@@ -5,7 +5,7 @@ package org.usfirst.ftc.aperturescience;
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy Wait", group="Red")
+@org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy", group="Red")
 public class AutoRedPosition2 extends AutoCommon {
 
     // how far to stay away from the wall

@@ -1,14 +1,14 @@
 package org.usfirst.ftc.aperturescience;
 
 /**
- * AutoRedPosition1 (Autonomous)
+ * AutoBluePosition1 (Autonomous)
  *
  * Slow and accurate.
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Mountain Man Jimmy", group="Red")
-public class AutoRedPosition1 extends AutoCommon {
+@org.swerverobotics.library.interfaces.Autonomous(name="BLUE Mountain Man Jimmy", group="Red")
+public class AutoBluePosition1 extends AutoCommon {
 
     // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
@@ -30,11 +30,11 @@ public class AutoRedPosition1 extends AutoCommon {
             // yeah! found the white line
 
             // back up 3.5 inches
-            driveBack(.3, 3.5);
+            //driveBack(.3, 3.5);
             Thread.sleep(500);
 
             // turn left 50 degrees
-            turnGyroSlow(-50);
+            turnGyroSlow(62);
             Thread.sleep(200);
 
             // drive until we're the right distance to the wall
@@ -44,11 +44,11 @@ public class AutoRedPosition1 extends AutoCommon {
             // did not find white line -- let's try to correct
 
             // drive forward 3.5 inches
-            drive(.3, 3.5);
+            drive(.3, 6);
             Thread.sleep(500);
 
             // turn left 56 degrees
-            turnGyroSlow(-56);
+            turnGyroSlow(64);
             Thread.sleep(500);
 
             // drive until we're the right distance to the wall
