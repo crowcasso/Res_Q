@@ -69,7 +69,7 @@ public class AutoCommon extends SynchronousOpMode {
 
     /* blue arm constants */
     private final double BLUE_UP = 0.0;
-    private final double BLUE_DOWN = 0.7;
+    private final double BLUE_DOWN = 0.8;
 
     /* tape constants */
     private final double LTAPE_UP = 0.85;

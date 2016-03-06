@@ -72,8 +72,8 @@ public class Nasic7_3 extends OpMode {
         wrist.setPosition(WUP);
         rightShield.setPosition(RSDOWN);
         backShield.setPosition(BSDOWN);
-        redArm.setPosition(RED_UP);
-        blueArm.setPosition(BLUE_UP);
+        redArm.setPosition(RED_INIT);
+        blueArm.setPosition(BLUE_INIT);
         tapeLock.setPosition(TAPE_LOCK_OUT);
         leftTape.setPosition(LTAPE_UP);
         rightTape.setPosition(RTAPE_UP);
@@ -360,12 +360,6 @@ public class Nasic7_3 extends OpMode {
         // manual controls -- overrides automatic
         double armMult = NORMAL_ARM_SPEED;
 
-        if (gamepad2.left_bumper) {
-            armMult = LOW_ARM_SPEED;
-        } else if (gamepad2.left_trigger > TRIGGER_THRESHOLD) {
-            armMult = HIGH_ARM_SPEED;
-        }
-
         if ((gamepad2.left_stick_y > JOY_THRESHOLD && armLimit.isPressed() == true
                 && !(armPos < ARM_TTLIMIT_POS && (Math.abs(ttPos) > TT_CENTER_RANGE)))
                 || (gamepad2.left_stick_y > JOY_THRESHOLD && godMode)) {
@@ -533,48 +527,40 @@ public class Nasic7_3 extends OpMode {
         telemetry.addData("Wrist Pos", wristPos);
     }
     /* red arm constants */
-    private final double RED_UP = 1.0;
-    private final double RED_DOWN = 0.25;
-
-    private final double RED_FIRST = RED_DOWN;
-    private final double RED_SECOND = 0.17;
-    private final double RED_THIRD = 0.00;
+    private final double RED_INIT = 1.0;
+    private final double RED_UP = 0.9;
+    private final double RED_FIRST = 0.2;
+    private final double RED_DOWN = 0.0;
 
     /* blue arm constants */
-    private final double BLUE_UP = 0.0;
-    private final double BLUE_DOWN = 0.72;
-
-    private final double BLUE_FIRST = BLUE_DOWN;
-    private final double BLUE_SECOND = 0.78;
-    private final double BLUE_THIRD = 1.00;
+    private final double BLUE_INIT = 0.0;
+    private final double BLUE_UP = 0.1;
+    private final double BLUE_FIRST = 0.8;
+    private final double BLUE_DOWN = 1.0;
 
     private final double CLIMBER_INCREMENT = 0.05;
 
     private double climberPos = RED_UP;
     boolean prevClimberButton = false;
     boolean prevManClimberButton = false;
+    boolean prevGP2ClimberButton = false;
 
     private void redClimberArmControl() {
 
         if ((gamepad1.dpad_left) && prevClimberButton == false) {
-            if (climberPos != RED_UP) {
-                climberPos = RED_UP;
+            if (Math.abs(climberPos - RED_DOWN) > 0.03) {
+                climberPos = RED_DOWN;
             }
             else{
-                climberPos = RED_DOWN;
+                climberPos = RED_UP;
             }
         }
 
         if ((gamepad1.dpad_right) && prevClimberButton == false) {
-            if (Math.abs(climberPos - RED_UP) < 0.03) {
+            if (Math.abs(climberPos - RED_FIRST) > 0.03) {
                 climberPos = RED_FIRST;
             }
-            else if (Math.abs(climberPos - RED_FIRST) < 0.03) {
-                climberPos = RED_SECOND;
-            }
-            else if (Math.abs(climberPos - RED_SECOND) < 0.03) {
-                climberPos = RED_THIRD;
-            } else {
+            else {
                 climberPos = RED_UP;
             }
         }
@@ -589,6 +575,16 @@ public class Nasic7_3 extends OpMode {
             climberPos -= CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
+
+        if(gamepad2.left_bumper) {
+            climberPos = RED_FIRST;
+        } else if (gamepad2.left_trigger > TRIGGER_THRESHOLD) {
+            climberPos = RED_DOWN;
+        } else if (prevGP2ClimberButton) {
+            climberPos = RED_UP;
+        }
+
+        prevGP2ClimberButton = gamepad2.left_bumper || (gamepad2.left_trigger > TRIGGER_THRESHOLD);
         prevManClimberButton = gamepad1.dpad_down || gamepad1.dpad_up;
         redArm.setPosition(climberPos);
         telemetry.addData("redArm", redArm.getPosition());
@@ -597,7 +593,7 @@ public class Nasic7_3 extends OpMode {
     private void blueClimberArmControl() {
 
         if ((gamepad1.dpad_left) && prevClimberButton == false) {
-            if (climberPos != BLUE_DOWN) {
+            if (Math.abs(climberPos - BLUE_DOWN) > 0.03) {
                 climberPos = BLUE_DOWN;
             }
             else{
@@ -606,15 +602,10 @@ public class Nasic7_3 extends OpMode {
         }
 
         if ((gamepad1.dpad_right) && prevClimberButton == false) {
-            if (Math.abs(climberPos - BLUE_UP) < 0.03) {
+            if (Math.abs(climberPos - BLUE_FIRST) > 0.03) {
                 climberPos = BLUE_FIRST;
             }
-            else if (Math.abs(climberPos - BLUE_FIRST) < 0.03) {
-                climberPos = BLUE_SECOND;
-            }
-            else if (Math.abs(climberPos - BLUE_SECOND) < 0.03) {
-                climberPos = BLUE_THIRD;
-            } else {
+            else{
                 climberPos = BLUE_UP;
             }
         }
@@ -629,6 +620,16 @@ public class Nasic7_3 extends OpMode {
             climberPos += CLIMBER_INCREMENT;
             climberPos = Range.clip(climberPos,0,1);
         }
+
+        if(gamepad2.left_bumper) {
+            climberPos = BLUE_FIRST;
+        } else if (gamepad2.left_trigger > TRIGGER_THRESHOLD) {
+            climberPos = BLUE_DOWN;
+        } else if (prevGP2ClimberButton) {
+            climberPos = BLUE_UP;
+        }
+
+        prevGP2ClimberButton = gamepad2.left_bumper || (gamepad2.left_trigger > TRIGGER_THRESHOLD);
         prevManClimberButton = gamepad1.dpad_down || gamepad1.dpad_up;
         blueArm.setPosition(climberPos);
         telemetry.addData("blueArm", blueArm.getPosition());
@@ -637,7 +638,7 @@ public class Nasic7_3 extends OpMode {
     boolean prevTapeServoButton = false;
     //boolean prevTapeMotorButton = false;
     boolean isTapeLocked = false;
-    final double TAPE_SPEED_OUT = 1.0;
+    final double TAPE_SPEED_OUT = 0.6;
     final double TAPE_SPEED_IN = 1.0;
     private final double TAPE_CONTROL_INCREMENT = 0.05;
     private final double TAPE_FINE_CONTROL_INCREMENT = 0.01;
