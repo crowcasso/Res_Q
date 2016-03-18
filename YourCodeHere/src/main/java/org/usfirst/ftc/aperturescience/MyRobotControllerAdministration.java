@@ -78,14 +78,15 @@ public class MyRobotControllerAdministration
     @OnRobotRunning
     public static void playSoundOnRobotRunning(Context context)
         {
-        SwerveUtil.playSound(context, R.raw.nxtstartup);
+        SwerveUtil.playSound(context, R.raw.nxtstartupsound);
         }
 
     /**
      * Any public static method annotated with {@link OnRobotStartupFailure} is invoked when the robot
      * object in the robot controller application fails to enter the running state during
-     * an attempt to do so. A common cause of such failures is a mismatch between the robot
-     * configuration file and the devices currently attached to the robot.
+     * an attempt to do so. A common cause of such failures was a mismatch between the robot
+     * configuration file and the devices currently attached to the robot, though with recent
+     * enhancements that situation now commonly succeeds using 'pretend' devices.
      *
      * @param context   the application context of the robot controller application. Useful for
      *                  interacting with other parts of the Android system, such creating a
@@ -95,7 +96,7 @@ public class MyRobotControllerAdministration
     @OnRobotStartupFailure
     public static void playSoundOnRobotStartupFailure(Context context)
         {
-        SwerveUtil.playSound(context, R.raw.chord);
+        SwerveUtil.playSound(context, R.raw.briefchord);
         }
 
     }
