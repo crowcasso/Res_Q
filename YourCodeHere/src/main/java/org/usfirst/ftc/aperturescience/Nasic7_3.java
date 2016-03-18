@@ -261,7 +261,7 @@ public class Nasic7_3 extends OpMode {
             // have we reached the max position?
             if (armPos < AUTO_ARM_MAX) {
                 //System.out.println("autoArmUp: running: " + Range.clip(armPos / 200, 0.2, 1));
-                arm.setPower(Range.clip(armPos / 200, 0.2, 1));
+                arm.setPower(Range.clip(armPos / 200, 0.2, .75)); //FIXME
             } else {
                 //System.out.println("autoArmUp: stop");
                 autoArmUp = false;  // auto arm up is done!
@@ -278,7 +278,7 @@ public class Nasic7_3 extends OpMode {
             if(armPos < ARM_TTLIMIT_POS && Math.abs(ttPos) > TT_CENTER_RANGE) {
                 arm.setPower(0.0);
             } else if (armLimit.isPressed() && arm.getCurrentPosition() > -TT_CENTER_RANGE ) {
-                arm.setPower(-Range.clip(armPos / 200, 0.2, 1));
+                arm.setPower(-Range.clip(armPos / 200, 0.2, 0.75)); //FIXME
             } else {
                 autoArmDown = false;
                 wristPos = WDOWN;

@@ -35,8 +35,8 @@ public final class AdaFruitBNO055IMU implements IBNO055IMU, II2cDeviceClientUser
     private final Object           startStopLock = new Object();
     private HandshakeThreadStarter accelerationMananger;
     private static final int       msAccelerationIntegrationStopWait = 20;
-    private static final int       msAwaitChipId                     = 2000;
-    private static final int       msAwaitSelfTest                   = 2000;
+    private static final int       msAwaitChipId                     = 4000;
+    private static final int       msAwaitSelfTest                   = 4000;
     // The msAwaitSelfTest value is lore. We choose here to use the same value for awaiting chip id,
     // on the (not completely unreasonable) theory that similar things are happening in the chip in both
     // cases. A survey of other libraries is as follows:

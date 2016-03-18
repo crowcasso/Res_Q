@@ -24,7 +24,7 @@ import org.swerverobotics.library.interfaces.Velocity;
  * @author FTC 5064 Aperture Science
  */
 @org.swerverobotics.library.interfaces.Autonomous
-@Disabled
+//@Disabled
 public class TobiAuto extends SynchronousOpMode {
 
     // Hardware
@@ -49,7 +49,7 @@ public class TobiAuto extends SynchronousOpMode {
         motor = hardwareMap.dcMotor.get("motor");
 
         // sensors
-        ultra = hardwareMap.ultrasonicSensor.get("ultra");
+        //ultra = hardwareMap.ultrasonicSensor.get("ultra");
 
         // run certain motors using encoders
         motor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
@@ -64,10 +64,10 @@ public class TobiAuto extends SynchronousOpMode {
         }
         */
 
-        /*
-        driveAcc(50000, 22000, 1, .4);
+
+        driveAcc(25000, 10000, .7, .2);
         Thread.sleep(1000);
-        */
+
     }
 
 

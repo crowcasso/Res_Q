@@ -1,12 +1,14 @@
 package org.usfirst.ftc.aperturescience;
 
+import org.usfirst.ftc.aperturescience.AutoCommon;
+
 /**
  * AutoRedPosition2 (Autonomous)
  *
  * @author FTC 5064 Aperture Science
  */
-@org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy", group="Red")
-public class AutoRedPosition2 extends AutoCommon {
+@org.swerverobotics.library.interfaces.Autonomous(name="RED Beach Bum Jimmy Longer", group="Red")
+public class AutoRedPosition2Long extends AutoCommon {
 
     // how far to stay away from the wall
     private final double THE_DISTANCE = 28;
@@ -20,8 +22,8 @@ public class AutoRedPosition2 extends AutoCommon {
         // pull out the tapes to make room for the arm
         setTapes();
 
-        // pause for 3 seconds
-        Thread.sleep(3000);
+        // pause for 5 seconds
+        Thread.sleep(5000);
 
         // move the robot toward the mountain
         driveBack(.2, 6);

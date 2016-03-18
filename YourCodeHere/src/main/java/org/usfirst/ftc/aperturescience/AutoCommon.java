@@ -162,10 +162,11 @@ public class AutoCommon extends SynchronousOpMode {
 
 
     /* code for moving the main arm and bucket to drop climbers */
-    private final double AUTO_ARM_MAX = 7050;
+    private final double AUTO_ARM_MAX = 6975;
     private final double AUTO_ARM_VERT = 4500;
-    private final double NORMAL_ARM_SPEED = 0.8;
+    private final double NORMAL_ARM_SPEED = 0.75;
     private final double ARMPOS_MOVE_BUCKET = 1500;
+
     private final double ARMPOS_MOVE_BUCKET_RANGE = 4000;
     private boolean doBucket = true;
 
@@ -202,7 +203,7 @@ public class AutoCommon extends SynchronousOpMode {
                 wristPos = WUP;
             }
             wrist.setPosition(wristPos);
-            double armPower = -Range.clip(armPos2 / 200.0, 0.05, 1);
+            double armPower = -Range.clip(armPos2 / 200.0, 0.1, 0.75); //FIXME
             arm.setPower(armPower);
             Thread.sleep(20);  // do we need this?
             loopCount++;
@@ -646,8 +647,8 @@ public class AutoCommon extends SynchronousOpMode {
         int totalDist = inchesToRotations(distance);
         int rampDist = inchesToRotations(rampDistance);
         int start = motorR.getCurrentPosition();
-        finalPower = Range.clip(finalPower, .2, 1);
-        initPower = Range.clip(initPower, .2, 1);
+        finalPower = Range.clip(finalPower, .2, 0.75);
+        initPower = Range.clip(initPower, .2, 0.75);
         if(initPower > finalPower) initPower = finalPower;
         if(2*rampDist > totalDist) rampDist = totalDist / 2;
 
