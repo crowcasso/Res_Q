@@ -11,15 +11,9 @@ import org.swerverobotics.library.interfaces.*;
  * from a synchronous OpMode. It expects a single servo, named
  * "servo". It works with both modern and legacy servo controllers.
  */
-<<<<<<< HEAD:SwerveRoboticsLibrary/src/main/java/org/swerverobotics/library/examples/SyncAutoServoDemo.java
-@Autonomous(name="Auto Servo (Sync)", group="Swerve Examples")
-@Disabled
-public class SyncAutoServoDemo extends SynchronousOpMode
-=======
 @Autonomous(name="Auto Servo (Synch)", group="Swerve Examples")
-// @Disabled
+@Disabled
 public class SynchAutoServoDemo extends SynchronousOpMode
->>>>>>> SwerveRobotics/master:SwerveRoboticsLibrary/src/main/java/org/swerverobotics/library/examples/SynchAutoServoDemo.java
     {
     Servo servo;
 

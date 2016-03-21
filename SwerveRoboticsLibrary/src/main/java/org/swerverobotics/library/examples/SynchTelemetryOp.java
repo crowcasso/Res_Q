@@ -10,12 +10,8 @@ import com.qualcomm.robotcore.util.*;
 /**
  * An example that illustrates use of the telemetry dashboard and log in a synchronous OpMode
  */
-<<<<<<< HEAD
-@TeleOp(name="Telemetry (sync)", group="Swerve Examples")
-@Disabled
-=======
+
 @TeleOp(name="Telemetry (Synch)", group="Swerve Examples")
->>>>>>> SwerveRobotics/master
 public class SynchTelemetryOp extends SynchronousOpMode
     {
     @Override protected void main() throws InterruptedException

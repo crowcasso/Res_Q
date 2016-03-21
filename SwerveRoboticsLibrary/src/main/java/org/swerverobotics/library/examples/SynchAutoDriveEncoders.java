@@ -11,15 +11,10 @@ import org.swerverobotics.library.interfaces.*;
  * The OpMode works with both legacy and modern motor controllers. It expects two motors,
  * named "motorLeft" and "motorRight".
  */
-<<<<<<< HEAD:SwerveRoboticsLibrary/src/main/java/org/swerverobotics/library/examples/SyncAutoDriveEncoders.java
-@Autonomous(name="Auto Drive (Sync)", group="Swerve Examples")
-@Disabled
-public class SyncAutoDriveEncoders extends SynchronousOpMode
-=======
+
 @Autonomous(name="Auto Drive (Synch)", group="Swerve Examples")
 @Disabled
 public class SynchAutoDriveEncoders extends SynchronousOpMode
->>>>>>> SwerveRobotics/master:SwerveRoboticsLibrary/src/main/java/org/swerverobotics/library/examples/SynchAutoDriveEncoders.java
     {
     //----------------------------------------------------------------------------------------------
     // State

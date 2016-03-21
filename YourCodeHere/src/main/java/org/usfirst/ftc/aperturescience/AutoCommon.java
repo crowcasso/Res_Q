@@ -126,6 +126,9 @@ public class AutoCommon extends SynchronousOpMode {
         turntable.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         sweeper.setDirection(DcMotor.Direction.REVERSE);
 
+        telemetry.addData("imu", "starting up the imu ...");
+        telemetry.update();
+
         // setup the imu
         parameters.angleUnit = IBNO055IMU.ANGLEUNIT.DEGREES;
         parameters.accelUnit = IBNO055IMU.ACCELUNIT.METERS_PERSEC_PERSEC;
