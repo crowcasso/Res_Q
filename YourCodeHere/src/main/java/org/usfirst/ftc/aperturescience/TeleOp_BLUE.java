@@ -8,7 +8,7 @@ import org.swerverobotics.library.interfaces.TeleOp;
  * @author FTC 5064 Aperture Science
  */
 @TeleOp
-public class TeleOp_BLUE extends Nasic7_3 {
+public class TeleOp_BLUE extends Nasic7_4 {
 
     public TeleOp_BLUE(){
         super(ALLIANCE.BLUE);

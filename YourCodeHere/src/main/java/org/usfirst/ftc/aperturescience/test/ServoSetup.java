@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.swerverobotics.library.ClassFactory;
 import org.swerverobotics.library.interfaces.Disabled;
 import org.swerverobotics.library.interfaces.TeleOp;
+import org.swerverobotics.library.internal.AdaFruitTCS34725ColorSensor;
 
 /**
  * Servo Setup -- for setting up Servos
@@ -37,6 +39,9 @@ public class ServoSetup extends OpMode {
     private Servo rightTape;
     private Servo tapeLock;
     private Servo blueArm;
+    private Servo armExt;
+
+    private AdaFruitTCS34725ColorSensor colorSensor;
 
     boolean pressed = false;
     double position = .5;
@@ -64,6 +69,7 @@ public class ServoSetup extends OpMode {
         rightTape = hardwareMap.servo.get("rightTape");
         tapeLock = hardwareMap.servo.get("tapeLock");
         blueArm = hardwareMap.servo.get("blueArm");
+        armExt = hardwareMap.servo.get("armExt");
 
 
         leftShield.setPosition(position);
@@ -75,10 +81,14 @@ public class ServoSetup extends OpMode {
         rightTape.setPosition(position);
         tapeLock.setPosition(position);
         blueArm.setPosition(position);
+        armExt.setPosition(position);
 
-        servo = blueArm;
+        servo = armExt;
 
         arm.setPower(0);
+
+        //colorSensor = ClassFactory.
+
 
         // Drive Base Setup
         /*

@@ -10,7 +10,7 @@ import org.swerverobotics.library.interfaces.*;
  * or a Modern Robotics color sensor named "colorSensor".
  */
 @TeleOp(name="Color Demo (Synch)", group="Swerve Examples")
-@Disabled
+//@Disabled
 public class SynchColorDemo extends SynchronousOpMode
     {
     ColorSensor color;
