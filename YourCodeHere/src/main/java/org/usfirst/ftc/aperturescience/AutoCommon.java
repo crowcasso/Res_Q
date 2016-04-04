@@ -3,6 +3,7 @@ package org.usfirst.ftc.aperturescience;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
@@ -42,6 +43,7 @@ public class AutoCommon extends SynchronousOpMode {
     private TouchSensor turnLimit;
     private ColorSensor colorSensor;
     private UltrasonicSensor ultra;
+    private GyroSensor gyro;
 
     /* bucket constants */
     private final double WDOWN = 0.47;
@@ -76,8 +78,9 @@ public class AutoCommon extends SynchronousOpMode {
     private final double RTAPE_UP = 0.15;
 
     /* gryo/magnometer */
+    /*
     private IBNO055IMU imu;
-    private IBNO055IMU.Parameters parameters = new IBNO055IMU.Parameters();
+    private IBNO055IMU.Parameters parameters = new IBNO055IMU.Parameters();*/
 
     @Override
     protected void main() throws InterruptedException {
@@ -106,6 +109,9 @@ public class AutoCommon extends SynchronousOpMode {
         // Range finder
         ultra = hardwareMap.ultrasonicSensor.get("ultra");
 
+        //Gyroscope
+        gyro = hardwareMap.gyroSensor.get("gyro");
+
         // initial servo positions
         leftShield.setPosition(LSDOWN);
         wrist.setPosition(WUP);
@@ -126,7 +132,7 @@ public class AutoCommon extends SynchronousOpMode {
         turntable.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         sweeper.setDirection(DcMotor.Direction.REVERSE);
 
-        telemetry.addData("imu", "starting up the imu ...");
+        /*telemetry.addData("imu", "starting up the imu ...");
         telemetry.update();
 
         // setup the imu
@@ -134,7 +140,7 @@ public class AutoCommon extends SynchronousOpMode {
         parameters.accelUnit = IBNO055IMU.ACCELUNIT.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = false;
         parameters.loggingTag = "BNO055";
-        imu = ClassFactory.createAdaFruitBNO055IMU(hardwareMap.i2cDevice.get("gyro"), parameters);
+        imu = ClassFactory.createAdaFruitBNO055IMU(hardwareMap.i2cDevice.get("imu"), parameters);
 
         // enable reporting of position using the naive integrator
         imu.startAccelerationIntegration(new Position(), new Velocity());
@@ -147,10 +153,13 @@ public class AutoCommon extends SynchronousOpMode {
         } else {
             telemetry.addData("imu", "RESTART NEEDED");
         }
-        telemetry.update();
+        telemetry.update();*/
 
         // it was suggested to do imu set first on i2c channel
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
+
+        telemetry.addData("Gyro:","Ready to go!");
+        telemetry.update();
 
         waitForStart();
 
@@ -243,7 +252,7 @@ public class AutoCommon extends SynchronousOpMode {
                 wristPos = WUP;
             }
             wrist.setPosition(wristPos);
-            arm.setPower(-Range.clip(armPos2 / 200.0, 0.05, 1));
+            arm.setPower(-Range.clip(armPos2 / 200.0, 0.05, 0.75)); //FIXME
             Thread.sleep(20);  // do we need this?
             loopCount++;
             System.out.println("armPos: " + armPos2 + ", arm power: " + -Range.clip(armPos2 / 200, 0.05, 1));
@@ -385,12 +394,14 @@ public class AutoCommon extends SynchronousOpMode {
 
 
 
-    /* ask the imu for the current heading */
+    /* ask the gyro for the current heading */
     public double getHeading() {
-        double heading = imu.getAngularOrientation().heading;
+        //double heading = imu.getAngularOrientation().heading;
+        double heading = gyro.getHeading();
 
         if (heading > 180){
             heading -= 360;
+
         }
 
         /* debugging
@@ -557,7 +568,7 @@ public class AutoCommon extends SynchronousOpMode {
             armPos = arm.getCurrentPosition();
             double wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);
             wrist.setPosition(wristPos);
-            arm.setPower(-Range.clip(armPos / 200.0, 0.2, 1));
+            arm.setPower(-Range.clip(armPos / 200.0, 0.2, 0.75)); //FIXME
             Thread.sleep(20);  // do we need this?
             System.out.println("armPos: " + armPos + ", arm power: " + -Range.clip(armPos / 200, 0.2, 1));
         }
@@ -603,7 +614,7 @@ public class AutoCommon extends SynchronousOpMode {
             armPos = arm.getCurrentPosition();
             double wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);
             wrist.setPosition(wristPos);
-            arm.setPower(-Range.clip(armPos / 200.0, 0.1, 1));
+            arm.setPower(-Range.clip(armPos / 200.0, 0.1, 0.75)); //FIXME
             Thread.sleep(20);  // do we need this?
             loopCount++;
             //System.out.println("armPos: " + armPos + ", arm power: " + -Range.clip(armPos / 200, 0.2, 1));

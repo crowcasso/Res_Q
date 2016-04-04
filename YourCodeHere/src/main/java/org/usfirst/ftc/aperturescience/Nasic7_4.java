@@ -241,7 +241,7 @@ public class Nasic7_4 extends OpMode {
             if (!isArmUp) {      // arm should go up
                 autoArmUp = true;
                 autoArmDown = false;
-                wristTime = System.currentTimeMillis() + 500;
+                wristTime = System.currentTimeMillis() + 650;
                 wristWay = 1;
             } else {            // arm should go down
                 autoArmUp = false;
@@ -450,8 +450,8 @@ public class Nasic7_4 extends OpMode {
                 tapeServoPosLeft = LTAPE_UP;
                 tapeServoPosRight = RTAPE_UP;
             } else {
-                tapeServoPosRight = RTAPE_UP + .4;
-                tapeServoPosLeft = LTAPE_UP - .4;
+                tapeServoPosRight = RTAPE_UP + .5;
+                tapeServoPosLeft = LTAPE_UP - .5;
             }
         }
         if (shieldDown) {
@@ -473,8 +473,8 @@ public class Nasic7_4 extends OpMode {
      * MOVE THE BUCKET
      **/
 
-    private final double WDOWN = 0.47;
-    private final double WUP = 0.5;
+    private final double WDOWN = 0.41;
+    private final double WUP = 0.0;
 
     private boolean prevWristButton = false;
     private boolean prevWristMan = false;
@@ -494,20 +494,20 @@ public class Nasic7_4 extends OpMode {
             if (bucketUp) {
                 if (arm.getCurrentPosition() < 4000) {
                     wristPos = WUP;
-                    wristTime = System.currentTimeMillis() + 500;
+                    wristTime = System.currentTimeMillis() + 650;
                     wristWay = 1;
                 } else wristPos = ARM_BACK_BUCKET_UP;
             } else {
                 if (arm.getCurrentPosition() < 4000) {
                     wristPos = WDOWN;
-                    wristTime = System.currentTimeMillis() + 500;
+                    wristTime = System.currentTimeMillis() + 650;
                     wristWay = -1;
                 } else wristPos = ARM_BACK_BUCKET_DOWN;
             }
         }
         if (gamepad1.left_stick_button && arm.getCurrentPosition() < 1000) {
             if (wristPos > WUP + .05) {
-                wristTime = System.currentTimeMillis() + 500;
+                wristTime = System.currentTimeMillis() + 650;
                 wristWay = 1;
             }
             wristPos = WUP;
@@ -517,17 +517,21 @@ public class Nasic7_4 extends OpMode {
             rightShield.setPosition(RSUP);
             leftShield.setPosition(LSUP);
             sweeperPower = 0.0;
+            shieldDown = false;
+            bucketUp = true;
         }
 
 
         if (wristWay == 1) {
-            sweeper.setPower(SWEEPER_POWER_OUT);
+            sweeperPower = SWEEPER_POWER_OUT/4;
             if (System.currentTimeMillis() > wristTime) {
+                sweeperPower = 0;
                 wristWay = 0;
             }
         } else if (wristWay == -1) {
-            sweeper.setPower(-SWEEPER_POWER_OUT);
+            sweeperPower = -SWEEPER_POWER_OUT/6;
             if (System.currentTimeMillis() > wristTime) {
+                sweeperPower = 0;
                 wristWay = 0;
             }
         }
@@ -695,6 +699,8 @@ public class Nasic7_4 extends OpMode {
 
         if (gamepad2.x && gamepad2.y && !gamepad2.start) {
             tapeLock.setPosition(TAPE_LOCK_IN);
+            tapeServoPosRight = 1.0;
+            tapeServoPosLeft = 0.0;
             isTapeLocked = true;
         } else if (gamepad2.x && gamepad2.y && gamepad2.start) {
             tapeLock.setPosition(TAPE_LOCK_OUT);
