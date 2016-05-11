@@ -2,13 +2,9 @@ package org.usfirst.ftc.aperturescience.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.swerverobotics.library.ClassFactory;
-import org.swerverobotics.library.interfaces.Disabled;
 import org.swerverobotics.library.interfaces.TeleOp;
 import org.swerverobotics.library.internal.AdaFruitTCS34725ColorSensor;
 
@@ -77,17 +73,15 @@ public class ServoSetup extends OpMode {
         rightShield.setPosition(position);
         backShield.setPosition(.84); //position);
         redArm.setPosition(position);
-        leftTape.setPosition(position);
-        rightTape.setPosition(position);
+        leftTape.setPosition(0);
+        rightTape.setPosition(1);
         tapeLock.setPosition(position);
         blueArm.setPosition(position);
-        armExt.setPosition(.76);
+        armExt.setPosition(.83);
 
         servo = armExt;
 
         arm.setPower(0);
-
-        //colorSensor = ClassFactory.
 
 
         // Drive Base Setup
@@ -111,22 +105,22 @@ public class ServoSetup extends OpMode {
             pressed = false;
         }
 
-            if (gamepad1.a && pressed == false) {
-                position += .05;
-                pressed = true;
-            }
-            if (gamepad1.b && pressed == false) {
-                position -= .05;
-                pressed = true;
-            }
-            if (gamepad1.x && pressed == false) {
-                position += .01;
-                pressed = true;
-            }
-            if (gamepad1.y && pressed == false) {
-                position -= .01;
-                pressed = true;
-            }
+        if (gamepad1.a && pressed == false) {
+            position += .05;
+            pressed = true;
+        }
+        if (gamepad1.b && pressed == false) {
+            position -= .05;
+            pressed = true;
+        }
+        if (gamepad1.x && pressed == false) {
+            position += .01;
+            pressed = true;
+        }
+        if (gamepad1.y && pressed == false) {
+            position -= .01;
+            pressed = true;
+        }
 
         position = Range.clip(position, 0, 1);
         servo.setPosition(position);

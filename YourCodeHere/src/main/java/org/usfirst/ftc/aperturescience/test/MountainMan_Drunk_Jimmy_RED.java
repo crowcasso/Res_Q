@@ -16,7 +16,7 @@ public class MountainMan_Drunk_Jimmy_RED extends AutoCommon {
         // everything up to waitForStart
         super.main();
 
-        driveAcc(60,15,1.0,0.2);
+        //driveBackRamp(60, 15, 1.0, 0.2);
         Thread.sleep(1000);
 
     }

@@ -31,6 +31,8 @@ public class Nasic7_4 extends OpMode {
     private Servo rightTape;
     private Servo tapeLock;
     private Servo armExt;
+    private Servo leftTapeWheel;
+    private Servo rightTapeWheel;
     private TouchSensor armLimit;
     private TouchSensor turnLimit;
 
@@ -42,6 +44,13 @@ public class Nasic7_4 extends OpMode {
         super();
         this.alliance = alliance;
     }
+
+    private double LTAPE_WHEEL_STOP = 0.5;
+    private double RTAPE_WHEEL_STOP = 0.5;
+    private double LTAPE_WHEEL_OUT = 1.0;
+    private double RTAPE_WHEEL_OUT = 0.0;
+    private double LTAPE_WHEEL_IN = 0.0;
+    private double RTAPE_WHEEL_IN = 1.0;
 
     @Override
     public void init() {
@@ -63,6 +72,8 @@ public class Nasic7_4 extends OpMode {
         blueArm = hardwareMap.servo.get("blueArm");
         leftTape = hardwareMap.servo.get("leftTape");
         rightTape = hardwareMap.servo.get("rightTape");
+        leftTapeWheel = hardwareMap.servo.get("leftTapeWheel");
+        rightTapeWheel = hardwareMap.servo.get("rightTapeWheel");
         tapeLock = hardwareMap.servo.get("tapeLock");
         armExt = hardwareMap.servo.get("armExt");
 
@@ -80,6 +91,8 @@ public class Nasic7_4 extends OpMode {
         tapeLock.setPosition(TAPE_LOCK_OUT);
         leftTape.setPosition(LTAPE_UP);
         rightTape.setPosition(RTAPE_UP);
+        leftTapeWheel.setPosition(LTAPE_WHEEL_STOP);
+        rightTapeWheel.setPosition(RTAPE_WHEEL_STOP);
         armExt.setPosition(ARM_EXT_IN);
 
         if (alliance == ALLIANCE.BLUE) {
@@ -95,6 +108,7 @@ public class Nasic7_4 extends OpMode {
         turntable.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         turntable.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         sweeper.setDirection(DcMotor.Direction.REVERSE);
+        sweeper.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         tapeMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
@@ -131,7 +145,7 @@ public class Nasic7_4 extends OpMode {
     /**
      * Basic controller constants
      **/
-    private final double TRIGGER_THRESHOLD = 0.2;
+    private final double TRIGGER_THRESHOLD = 0.5;
     private final double JOY_THRESHOLD = 0.2;
 
 
@@ -139,7 +153,7 @@ public class Nasic7_4 extends OpMode {
      * DRIVE THE ROBOT
      **/
 
-    private final double NORMAL_DRIVE_SPEED = 0.5;
+    private final double NORMAL_DRIVE_SPEED = 0.6;
     private final double LOW_DRIVE_SPEED = 0.3;
     private final double HIGH_DRIVE_SPEED = 1.0;
 
@@ -180,8 +194,10 @@ public class Nasic7_4 extends OpMode {
      * SWEEP UP BLOCKS
      **/
 
-    private final double SWEEPER_POWER_IN = 0.5;
+    private final double SWEEPER_POWER_IN = 0.75;
     private final double SWEEPER_POWER_OUT = 1.0;
+
+    boolean prevSweepSpeedButton = false;
 
     private double sweeperPower = 0.0;
 
@@ -212,8 +228,8 @@ public class Nasic7_4 extends OpMode {
     private final double TT_ARMLIMIT_POS = 4600;
     private final double AUTO_ARM_MAX = 6500;
     private final double ARM_BACK_BUCKET_UP = 1.0;
-    private final double ARM_BACK_BUCKET_DOWN = 0.35;
-    private final double ARM_BACK_TT_TURN = 1150;
+    private final double ARM_BACK_BUCKET_DOWN = 0.7;
+    private final double ARM_BACK_TT_TURN = 800;
     private final double NORMAL_TABLE_SPEED = 0.4;
     private final double LOW_TABLE_SPEED = 0.15;
     private final double HIGH_TABLE_SPEED = 0.75;
@@ -262,7 +278,7 @@ public class Nasic7_4 extends OpMode {
         // automatic arm raise
         if (autoArmUp) {
             //System.out.println("autoArmUp");
-            wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), .1, 1);
+            wristPos = Range.clip(((armPos - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), WUP, 1);
             wrist.setPosition(wristPos);
 
             if (armPos > ARMPOS_CLEARED_SWITCH) {
@@ -450,8 +466,8 @@ public class Nasic7_4 extends OpMode {
                 tapeServoPosLeft = LTAPE_UP;
                 tapeServoPosRight = RTAPE_UP;
             } else {
-                tapeServoPosRight = RTAPE_UP + .5;
-                tapeServoPosLeft = LTAPE_UP - .5;
+                tapeServoPosRight = RTAPE_UP + .6;
+                tapeServoPosLeft = LTAPE_UP - .6;
             }
         }
         if (shieldDown) {
@@ -473,8 +489,8 @@ public class Nasic7_4 extends OpMode {
      * MOVE THE BUCKET
      **/
 
-    private final double WDOWN = 0.41;
-    private final double WUP = 0.0;
+    private final double WDOWN = 0.55;
+    private final double WUP = 0.12;
 
     private boolean prevWristButton = false;
     private boolean prevWristMan = false;
@@ -511,8 +527,8 @@ public class Nasic7_4 extends OpMode {
                 wristWay = 1;
             }
             wristPos = WUP;
-            tapeServoPosRight = RTAPE_UP + .4;
-            tapeServoPosLeft = LTAPE_UP - .4;
+            tapeServoPosRight = RTAPE_UP + .6;
+            tapeServoPosLeft = LTAPE_UP - .6;
             backShield.setPosition(BSUP);
             rightShield.setPosition(RSUP);
             leftShield.setPosition(LSUP);
@@ -523,13 +539,13 @@ public class Nasic7_4 extends OpMode {
 
 
         if (wristWay == 1) {
-            sweeperPower = SWEEPER_POWER_OUT/4;
+            sweeperPower = SWEEPER_POWER_OUT/2;
             if (System.currentTimeMillis() > wristTime) {
                 sweeperPower = 0;
                 wristWay = 0;
             }
         } else if (wristWay == -1) {
-            sweeperPower = -SWEEPER_POWER_OUT/6;
+            sweeperPower = -SWEEPER_POWER_OUT/2;
             if (System.currentTimeMillis() > wristTime) {
                 sweeperPower = 0;
                 wristWay = 0;
@@ -554,8 +570,8 @@ public class Nasic7_4 extends OpMode {
     }
 
 
-    private final double ARM_EXT_IN = .76;
-    private final double ARM_EXT_OUT = .28;
+    private final double ARM_EXT_IN = .72;
+    private final double ARM_EXT_OUT = .4;
     private boolean prevG2Stick = false;
     private boolean armExtIn = true;
 
@@ -572,6 +588,8 @@ public class Nasic7_4 extends OpMode {
                 armExt.setPosition(ARM_EXT_OUT);
             }
         }
+
+        telemetry.addData("armExt", armExt.getPosition());
 
         prevG2Stick = currG2Stick;
     }
@@ -683,15 +701,15 @@ public class Nasic7_4 extends OpMode {
     boolean prevTapeServoButton = false;
     //boolean prevTapeMotorButton = false;
     boolean isTapeLocked = false;
-    final double TAPE_SPEED_OUT = 0.6;
+    final double TAPE_SPEED_OUT = 0.2;
     final double TAPE_SPEED_IN = 1.0;
     private final double TAPE_CONTROL_INCREMENT = 0.05;
     private final double TAPE_FINE_CONTROL_INCREMENT = 0.01;
     private final double LTAPE_UP = 0.81;
-    private final double RTAPE_UP = 0.25;
+    private final double RTAPE_UP = 0.32;
     private final double TAPE_SERVO_RANGE = 0.75;
-    private final double TAPE_LOCK_IN = 0.95;
-    private final double TAPE_LOCK_OUT = 0.35;
+    private final double TAPE_LOCK_IN = 0.5;
+    private final double TAPE_LOCK_OUT = 0.0;
     double tapeServoPosRight = RTAPE_UP;
     double tapeServoPosLeft = LTAPE_UP;
 
@@ -709,10 +727,16 @@ public class Nasic7_4 extends OpMode {
 
         if (gamepad2.dpad_up) {
             tapeMotor.setPower(TAPE_SPEED_OUT);
+            leftTapeWheel.setPosition(LTAPE_WHEEL_OUT);
+            rightTapeWheel.setPosition(RTAPE_WHEEL_OUT);
         } else if (gamepad2.dpad_down) {
             tapeMotor.setPower(-TAPE_SPEED_IN);
+            leftTapeWheel.setPosition(LTAPE_WHEEL_IN);
+            rightTapeWheel.setPosition(RTAPE_WHEEL_IN);
         } else {
             tapeMotor.setPower(0);
+            leftTapeWheel.setPosition(LTAPE_WHEEL_STOP);
+            rightTapeWheel.setPosition(RTAPE_WHEEL_STOP);
         }
 
         if (gamepad2.dpad_left && !prevTapeServoButton) {
@@ -724,18 +748,14 @@ public class Nasic7_4 extends OpMode {
             tapeServoPosRight += TAPE_CONTROL_INCREMENT;
             tapeServoPosLeft -= TAPE_CONTROL_INCREMENT;
         }
-        if (gamepad2.left_trigger > TRIGGER_THRESHOLD && !prevTapeServoButton) {
-            //Angle Tape Servos Higher
-            tapeServoPosRight += TAPE_FINE_CONTROL_INCREMENT;
-        } else if (gamepad2.left_bumper && !prevTapeServoButton) {
-            //Angle Tape Servos Lower
-            tapeServoPosLeft -= TAPE_FINE_CONTROL_INCREMENT;
-        }
 
         tapeServoPosLeft = Range.clip(tapeServoPosLeft, LTAPE_UP - .75, LTAPE_UP);
         tapeServoPosRight = Range.clip(tapeServoPosRight, RTAPE_UP, RTAPE_UP + .75);
         leftTape.setPosition(tapeServoPosLeft);
         rightTape.setPosition(tapeServoPosRight);
+
+        telemetry.addData("tapeServoPosLeft", tapeServoPosLeft);
+        telemetry.addData("tapeServoPosRight", tapeServoPosRight);
 
         prevTapeServoButton = gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.left_bumper || gamepad2.left_trigger > TRIGGER_THRESHOLD;
         //prevTapeMotorButton = gamepad2.dpad_up || gamepad2.dpad_down;
@@ -770,7 +790,7 @@ public class Nasic7_4 extends OpMode {
     private double scaleInput(double dVal) {
         double[] scaleArray = {
                 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00
+                0.30, 0.36, 0.50, 0.65, 0.70, 0.72, 0.75, 0.75, 0.75
         };
 
         // get the corresponding index for the scaleInput array.
@@ -800,12 +820,13 @@ public class Nasic7_4 extends OpMode {
  * QHLV (P4) off
  * <p/>
  * Servo Controllers
- * QTS8 (P1) 1: leftShield     2: rightShield      3: backShield     5: wrist
- * VDLE (P2) 1: leftTape       2: rightTape        4: tapeLock       5. redArm     6. blueArm
+ * QTS8 (P1) 1: leftShield     2: rightShield      3: backShield     4: rightTapeWheel   5: wrist      6. armExt
+ * VDLE (P2) 1: leftTape       2: rightTape        3: leftTapeWheel  4: tapeLock         5: redArm     6. blueArm
  * <p/>
  * (VD4U) Core Device
  * D0: armSwitch
  * D1: ttSwitch
- * I2C0: gyro
+ * I2C0: imu -- not used
  * I2C1: colorSensor
+ * I2C4: gyro
  */

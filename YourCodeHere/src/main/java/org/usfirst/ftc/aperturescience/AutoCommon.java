@@ -9,11 +9,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.swerverobotics.library.ClassFactory;
 import org.swerverobotics.library.SynchronousOpMode;
-import org.swerverobotics.library.interfaces.IBNO055IMU;
-import org.swerverobotics.library.interfaces.Position;
-import org.swerverobotics.library.interfaces.Velocity;
 
 /**
  * AutoCommon (Autonomous)
@@ -31,6 +27,7 @@ public class AutoCommon extends SynchronousOpMode {
     private DcMotor motorR;
     private DcMotor motorL;
     private DcMotor sweeper;
+    private Servo armExt;
     private Servo leftShield;
     private Servo rightShield;
     private Servo backShield;
@@ -39,6 +36,8 @@ public class AutoCommon extends SynchronousOpMode {
     private Servo rightTape;
     private Servo redArm;
     private Servo blueArm;
+    private Servo leftTapeWheel;
+    private Servo rightTapeWheel;
     private TouchSensor armLimit;
     private TouchSensor turnLimit;
     private ColorSensor colorSensor;
@@ -47,7 +46,7 @@ public class AutoCommon extends SynchronousOpMode {
 
     /* bucket constants */
     private final double WDOWN = 0.47;
-    private final double WUP = 0.01;
+    private final double WUP = 0.12;
 
     /* shield constants */
     private final double LSDOWN = 0.01;
@@ -76,6 +75,8 @@ public class AutoCommon extends SynchronousOpMode {
     /* tape constants */
     private final double LTAPE_UP = 0.85;
     private final double RTAPE_UP = 0.15;
+    private double LTAPE_WHEEL_STOP = 0.5;
+    private double RTAPE_WHEEL_STOP = 0.5;
 
     /* gryo/magnometer */
     /*
@@ -91,6 +92,7 @@ public class AutoCommon extends SynchronousOpMode {
         arm = hardwareMap.dcMotor.get("arm");
         turntable = hardwareMap.dcMotor.get("turntable");
         sweeper = hardwareMap.dcMotor.get("sweeper");
+        armExt = hardwareMap.servo.get("armExt");
 
         // servos
         leftShield = hardwareMap.servo.get("leftShield");
@@ -102,6 +104,9 @@ public class AutoCommon extends SynchronousOpMode {
         leftTape = hardwareMap.servo.get("leftTape");
         rightTape = hardwareMap.servo.get("rightTape");
 
+        leftTapeWheel = hardwareMap.servo.get("leftTapeWheel");
+        rightTapeWheel = hardwareMap.servo.get("rightTapeWheel");
+
         // touch sensors
         armLimit = hardwareMap.touchSensor.get("armSwitch");
         turnLimit = hardwareMap.touchSensor.get("ttSwitch");
@@ -111,6 +116,7 @@ public class AutoCommon extends SynchronousOpMode {
 
         //Gyroscope
         gyro = hardwareMap.gyroSensor.get("gyro");
+        gyro.calibrate();
 
         // initial servo positions
         leftShield.setPosition(LSDOWN);
@@ -121,6 +127,10 @@ public class AutoCommon extends SynchronousOpMode {
         blueArm.setPosition(BLUE_UP);
         leftTape.setPosition(LTAPE_UP);
         rightTape.setPosition(RTAPE_UP);
+        leftTapeWheel.setPosition(LTAPE_WHEEL_STOP);
+        rightTapeWheel.setPosition(RTAPE_WHEEL_STOP);
+        armExt.setPosition(.83);
+
 
         // run certain motors using encoders
         motorL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
@@ -158,7 +168,11 @@ public class AutoCommon extends SynchronousOpMode {
         // it was suggested to do imu set first on i2c channel
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
-        telemetry.addData("Gyro:","Ready to go!");
+        while (gyro.isCalibrating())  {
+            Thread.sleep(50);
+        }
+
+        telemetry.addData("Init","Ready to go!");
         telemetry.update();
 
         waitForStart();
@@ -168,7 +182,7 @@ public class AutoCommon extends SynchronousOpMode {
 
     /* pull left tape out to clear the arm */
     public void setTapes() {
-        leftTape.setPosition(LTAPE_UP - .1);
+        leftTape.setPosition(LTAPE_UP - .2);
         rightTape.setPosition(RTAPE_UP);
     }
 
@@ -191,11 +205,11 @@ public class AutoCommon extends SynchronousOpMode {
             armPos2 = arm.getCurrentPosition();
             double wristPos = Range.clip(((armPos2 - ARMPOS_MOVE_BUCKET) / ARMPOS_MOVE_BUCKET_RANGE), 0.2, 1);//--------
             if(arm.getCurrentPosition() > (AUTO_ARM_MAX - 2000)) {
-            doBucket = false;
-            wrist.setPosition(0.7);
-             } else {
-             wrist.setPosition(wristPos);
-             }
+                doBucket = false;
+                wrist.setPosition(0.7);
+            } else {
+                wrist.setPosition(wristPos);
+            }
         }
         arm.setPower(0);
 
@@ -409,6 +423,9 @@ public class AutoCommon extends SynchronousOpMode {
         telemetry.update();
         */
 
+        System.out.println("heading: " + heading);
+        System.out.println("x: " + gyro.rawX() + ", y: " + gyro.rawY() + "z: " + gyro.rawZ());
+
         return heading;
     }
 
@@ -531,6 +548,53 @@ public class AutoCommon extends SynchronousOpMode {
             return true;
         }
         return false;
+    }
+
+
+    public boolean driveBackRampToWhite(double startPower, double power, double rampDistance, double distance) throws InterruptedException {
+        int n = inchesToRotations(distance);
+        int rDistance = inchesToRotations(rampDistance);
+
+        int start = motorR.getCurrentPosition();
+        double motorPower = -startPower;
+
+        motorL.setPower(motorPower);
+        motorR.setPower(motorPower);
+
+        boolean foundWhite = false;
+
+
+        while (!(foundWhite = isWhite()) && (motorR.getCurrentPosition() > (start - n))) {
+
+            double distGone = Math.abs(motorR.getCurrentPosition() - start);
+            double distToGo = Math.abs(start) + n - Math.abs(motorR.getCurrentPosition());
+            double slope = (power - startPower) / Math.abs(rDistance);
+            double yUp = slope * distGone;
+            double yDown = slope * distToGo;
+            double minimum = Math.min(Math.min(yUp, yDown), power);
+            motorPower = -Range.clip(minimum, startPower, power);
+
+            System.out.println("yUp: " + yUp + ", yDown: " + yDown + ", min: " + minimum + ", motorPower: " + motorPower);
+
+            motorL.setPower(motorPower);
+            motorR.setPower(motorPower);
+
+            telemetry.addData("Power:",motorPower);
+            telemetry.update();
+
+        }
+
+
+        motorL.setPower(0.0);
+        motorR.setPower(0.0);
+        colorSensor.enableLed(true);
+        telemetry.addData("RED",colorSensor.red());
+        telemetry.addData("BLUE", colorSensor.blue());
+        telemetry.addData("GREEN", colorSensor.green());
+        telemetry.addData("ARGB", colorSensor.argb());
+        telemetry.update();
+
+        return foundWhite;
     }
 
 
@@ -657,7 +721,7 @@ public class AutoCommon extends SynchronousOpMode {
     }
 
     /*  drive forward without error correction */
-    public void driveAcc(double distance, double rampDistance, double finalPower, double initPower ) throws InterruptedException {
+    public void driveAcc( double initPower, double finalPower, double rampDistance, double distance ) throws InterruptedException {
         int totalDist = inchesToRotations(distance);
         int rampDist = inchesToRotations(rampDistance);
         int start = motorR.getCurrentPosition();
@@ -701,6 +765,50 @@ public class AutoCommon extends SynchronousOpMode {
 
         motorR.setPower(0);
         motorL.setPower(0);
+    }
+
+    public boolean driveBackToWhiteAcc5Peram(double startPower, double finalPower, double slowDist1, double accDist, double fastDist, double deccDist, double slowDist2) {
+        startPower = Range.clip(startPower, .1, .75);
+        finalPower = Range.clip(finalPower, .1, .75);
+        slowDist1 = (slowDist1 < 0) ? 0 : inchesToRotations(slowDist1);
+        slowDist2 = (slowDist2 < 0) ? 0 : inchesToRotations(slowDist2);
+        accDist = (accDist < 0) ? 0 : inchesToRotations(accDist);
+        deccDist = (deccDist < 0) ? 0 : inchesToRotations(deccDist);
+        fastDist = (fastDist < 0) ? 0 : inchesToRotations(fastDist);
+        double total = slowDist1 + slowDist2 + accDist + deccDist + fastDist;
+        double motorPos = -motorR.getCurrentPosition();
+        double start = motorPos;
+        double motorPower = 0;
+
+        while(motorPos < total) {
+            if(motorPos < slowDist1) {
+                motorPower = startPower;
+            } else if (motorPos < slowDist1 + accDist) {
+                double distThru = motorPos - start - slowDist1;
+                double ratio = distThru / accDist;
+                motorPower = startPower + ( ratio * (finalPower - startPower) );
+            } else if (motorPos < slowDist1 + accDist + fastDist) {
+                motorPower = finalPower;
+            } else if (motorPos < slowDist1 + accDist + fastDist + deccDist) {
+                double distThru = total - slowDist2 - motorPos;
+                double ratio = distThru / deccDist;
+                motorPower = startPower + ( ratio * (finalPower - startPower) );
+            } else {
+                motorPower = startPower;
+            }
+
+            //check values and assign to motors
+            motorPower = -Range.clip(motorPower, .1, .75);
+            motorL.setPower(motorPower);
+            motorR.setPower(motorPower);
+
+            motorPos = -motorR.getCurrentPosition();
+        }
+
+        motorL.setPower(0);
+        motorR.setPower(0);
+
+        return false;
     }
 
     /* drive back until we see red or white */

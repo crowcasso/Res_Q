@@ -22,6 +22,11 @@ public class AutoRedPosition1 extends AutoCommon {
         // pull out the tapes to make room for the arm
         setTapes();
 
+        turnGyroSlow(-45);
+        Thread.sleep(500);
+
+        /*
+
         // drive back 87 inches or until we find the white line
         boolean foundWhite = driveBackToWhite(.5, 87);
         Thread.sleep(200);  // small pause
@@ -72,5 +77,6 @@ public class AutoRedPosition1 extends AutoCommon {
 
         // back into the red box
         driveBack(.5, 12);
+        */
     }
 }
